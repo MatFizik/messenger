@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:messenger/features/chats/screens/chat_screen.dart';
-import 'package:messenger/features/chats/widgets/chat_tile_widget.dart';
+import 'package:messenger/features/chats/presentation/screens/chat_screen.dart';
+import 'package:messenger/features/chats/presentation/widgets/chat_tile_widget.dart';
 
 class ChatsScreen extends StatefulWidget {
   const ChatsScreen({super.key});

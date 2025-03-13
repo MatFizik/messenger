@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:messenger/features/chats/widgets/messenge_bubble_widget.dart';
-import 'package:messenger/features/chats/widgets/messenge_own_bubble_widget.dart';
+import 'package:messenger/features/chats/presentation/widgets/messenge_bubble_widget.dart';
+import 'package:messenger/features/chats/presentation/widgets/messenge_own_bubble_widget.dart';
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({super.key});

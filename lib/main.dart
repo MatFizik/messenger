@@ -1,7 +1,11 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:messenger/features/chats/screens/main_chats_screen.dart';
+import 'package:messenger/features/auth/presentation/screens/auth_screen.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding
+      .ensureInitialized(); // Нужно для асинхронной инициализации
+  await Firebase.initializeApp();
   runApp(const MessengerApp());
 }
 
@@ -16,7 +20,7 @@ class MessengerApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const ChatsScreen(),
+      home: const AuthScreen(),
     );
   }
 }
