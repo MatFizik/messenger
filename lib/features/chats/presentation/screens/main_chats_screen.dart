@@ -99,8 +99,7 @@ class _ChatsScreenState extends State<ChatsScreen> {
                       var chat = chats[index];
                       return ChatTileWidget(
                         onTap: () => _openChatScreen(chat.id.trim()),
-                        avatarUrl:
-                            'https://randomuser.me/api/portraits/men/22.jpg',
+                        avatarUrl: null,
                         name: chat['name'].toString(),
                         lastMessage: chat['lastMessage'].toString(),
                         timestamp: chat['last_message_date'],

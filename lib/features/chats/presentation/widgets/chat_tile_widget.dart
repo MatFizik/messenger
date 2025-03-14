@@ -1,9 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:messenger/common/theme/app_colors.dart';
 
 class ChatTileWidget extends StatelessWidget {
   final VoidCallback onTap;
-  final String avatarUrl;
+  final String? avatarUrl;
   final String name;
   final String lastMessage;
   final Timestamp? timestamp;
@@ -31,6 +32,39 @@ class ChatTileWidget extends StatelessWidget {
     }
   }
 
+  Widget getAvatar() {
+    String firstName = name.split(' ')[0];
+    String lastName = name.split(' ')[1];
+    if (avatarUrl != null && avatarUrl != '') {
+      return CircleAvatar(
+        radius: 30,
+        backgroundImage: NetworkImage(avatarUrl!),
+      );
+    } else {
+      return Container(
+        width: 60,
+        height: 60,
+        decoration: const BoxDecoration(
+          shape: BoxShape.circle,
+          gradient: LinearGradient(
+            colors: [AppColors.blue, AppColors.green],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+        ),
+        alignment: Alignment.center,
+        child: Text(
+          firstName[0].toUpperCase() + lastName[0].toUpperCase(),
+          style: const TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return InkWell(
@@ -45,10 +79,7 @@ class ChatTileWidget extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    CircleAvatar(
-                      radius: 30,
-                      backgroundImage: NetworkImage(avatarUrl),
-                    ),
+                    getAvatar(),
                     const SizedBox(width: 10),
                     Column(
                       crossAxisAlignment: lastMessage != ''
@@ -57,19 +88,13 @@ class ChatTileWidget extends StatelessWidget {
                       children: [
                         Text(
                           name,
-                          style: const TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.bold,
-                          ),
+                          style: Theme.of(context).textTheme.bodyMedium,
                         ),
                         const SizedBox(height: 2),
                         if (lastMessage != '')
                           Text(
                             lastMessage,
-                            style: const TextStyle(
-                              fontSize: 12,
-                              color: Colors.grey,
-                            ),
+                            style: Theme.of(context).textTheme.bodySmall,
                           ),
                       ],
                     ),
@@ -77,10 +102,7 @@ class ChatTileWidget extends StatelessWidget {
                 ),
                 Text(
                   parseDate(timestamp),
-                  style: const TextStyle(
-                    fontSize: 12,
-                    color: Colors.grey,
-                  ),
+                  style: Theme.of(context).textTheme.bodySmall,
                   textAlign: TextAlign.right,
                 ),
               ],

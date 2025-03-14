@@ -100,7 +100,7 @@ class _CreateChatState extends State<CreateChat> {
                   var user = users[index];
                   return ChatTileWidget(
                     onTap: () => _openChatScreen(context, user.id),
-                    avatarUrl: 'https://randomuser.me/api/portraits/men/22.jpg',
+                    avatarUrl: null,
                     name: user['full_name'].toString(),
                     lastMessage: '',
                     timestamp: null,
