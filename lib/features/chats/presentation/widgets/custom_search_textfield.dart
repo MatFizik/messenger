@@ -33,7 +33,7 @@ class _SearchTextfieldState extends State<CustomSearchTextfield> {
   Widget build(BuildContext context) {
     return SearchBar(
       onChanged: (value) => _onSearchChanged(value),
-      hintText: 'Search...',
+      hintText: 'Поиск',
       shadowColor: WidgetStateProperty.all(Colors.transparent),
       padding: const WidgetStatePropertyAll(
         EdgeInsets.only(left: 14),

@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:messenger/bloc/cubit/theme_cubit.dart';
+import 'package:messenger/common/theme/app_theme.dart';
 import 'package:messenger/features/auth/presentation/screens/auth_screen.dart';
 import 'package:messenger/features/chats/presentation/screens/main_chats_screen.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -23,9 +24,9 @@ class MessengerApp extends StatelessWidget {
         builder: (context, state) {
           return MaterialApp(
             title: 'Messenger',
-            theme: state.brightness == Brightness.dark
-                ? ThemeData.dark()
-                : ThemeData.light(),
+            theme: state.brightness != Brightness.dark
+                ? AppTheme.lightTheme
+                : AppTheme.darkTheme,
             home: const AuthWrapper(),
           );
         },

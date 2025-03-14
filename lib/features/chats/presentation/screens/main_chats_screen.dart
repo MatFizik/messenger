@@ -7,6 +7,7 @@ import 'package:messenger/features/chats/presentation/screens/chat_screen.dart';
 import 'package:messenger/features/chats/presentation/widgets/chat_tile_widget.dart';
 import 'package:messenger/features/chats/presentation/widgets/create_chat.dart';
 import 'package:messenger/features/chats/presentation/widgets/custom_search_textfield.dart';
+import 'package:messenger/features/settings/presentation/settings_screen.dart';
 
 class ChatsScreen extends StatefulWidget {
   const ChatsScreen({super.key});
@@ -40,15 +41,34 @@ class _ChatsScreenState extends State<ChatsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: CustomSearchTextfield(
-          onChanged: onSearch,
-          filter: true,
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              'Чаты',
+              style: Theme.of(context).textTheme.titleLarge,
+            ),
+            IconButton(
+              onPressed: () => Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => const SettingsScreen(),
+                ),
+              ),
+              icon: const Icon(Icons.settings),
+            ),
+          ],
         ),
       ),
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 24.0),
+        padding: const EdgeInsets.only(left: 10.0, right: 10.0, bottom: 24.0),
         child: Column(
           children: [
+            CustomSearchTextfield(
+              onChanged: onSearch,
+              filter: true,
+            ),
+            const SizedBox(height: 24),
+            const Divider(),
             Expanded(
               child: StreamBuilder<QuerySnapshot>(
                 stream: _firestore

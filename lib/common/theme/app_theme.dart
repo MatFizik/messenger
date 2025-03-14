@@ -16,7 +16,7 @@ class AppTheme {
       bodyLarge: TextStyle(color: AppColors.textPrimaryLight, fontSize: 16),
       bodyMedium: TextStyle(color: AppColors.textSecondaryLight, fontSize: 14),
       bodySmall: TextStyle(color: AppColors.textTertiaryLight, fontSize: 12),
-      titleLarge: TextStyle(color: AppColors.textPrimaryLight, fontSize: 20),
+      titleLarge: TextStyle(color: AppColors.textPrimaryLight, fontSize: 32),
     ),
     appBarTheme: const AppBarTheme(
       backgroundColor: AppColors.lightBgPrimary,
@@ -29,18 +29,10 @@ class AppTheme {
       iconTheme: IconThemeData(color: AppColors.textPrimaryLight),
       surfaceTintColor: Colors.transparent,
     ),
-    dividerColor: AppColors.lightBgPrimary,
+    dividerColor: AppColors.lightBgSecondary,
     dividerTheme: const DividerThemeData(
-      color: AppColors.lightBgPrimary,
+      color: AppColors.lightBgSecondary,
       thickness: 2,
-    ),
-    tabBarTheme: TabBarTheme(
-      labelColor: AppColors.textPrimaryLight,
-      indicatorColor: AppColors.textPrimaryLight,
-      unselectedLabelColor: AppColors.textTertiaryLight,
-      overlayColor:
-          WidgetStateProperty.all(AppColors.textPrimaryLight.withOpacity(0.1)),
-      dividerHeight: 0,
     ),
     searchBarTheme: SearchBarThemeData(
       hintStyle: const WidgetStatePropertyAll(
@@ -49,7 +41,6 @@ class AppTheme {
       shadowColor: WidgetStateProperty.all(Colors.transparent),
       elevation: const WidgetStatePropertyAll(0),
       backgroundColor: const WidgetStatePropertyAll(AppColors.lightBgSecondary),
-      //leading: Icon(Icons.search, color: AppColors.textTertiaryLight),
     ),
   );
 
@@ -67,7 +58,7 @@ class AppTheme {
       bodyLarge: TextStyle(color: AppColors.textPrimary, fontSize: 16),
       bodyMedium: TextStyle(color: AppColors.textSecondary, fontSize: 14),
       bodySmall: TextStyle(color: AppColors.textTertiary, fontSize: 12),
-      titleLarge: TextStyle(color: AppColors.textPrimary, fontSize: 20),
+      titleLarge: TextStyle(color: AppColors.textPrimary, fontSize: 32),
     ),
     bottomNavigationBarTheme: const BottomNavigationBarThemeData(
       backgroundColor: AppColors.darkBgSecondary,
