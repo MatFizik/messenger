@@ -3,7 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:messenger/features/chats/presentation/screens/chat_screen.dart';
 import 'package:messenger/features/chats/presentation/widgets/chat_tile_widget.dart';
-import 'package:messenger/features/chats/presentation/widgets/create_chat.dart';
+import 'package:messenger/features/chats/presentation/screens/create_chat.dart';
 import 'package:messenger/features/chats/presentation/widgets/custom_search_textfield.dart';
 import 'package:messenger/features/settings/presentation/settings_screen.dart';
 
@@ -58,7 +58,11 @@ class _ChatsScreenState extends State<ChatsScreen> {
         ),
       ),
       body: Padding(
-        padding: const EdgeInsets.only(left: 10.0, right: 10.0, bottom: 24.0),
+        padding: const EdgeInsets.only(
+          left: 10.0,
+          right: 10.0,
+          bottom: 24.0,
+        ),
         child: Column(
           children: [
             CustomSearchTextfield(
@@ -75,6 +79,7 @@ class _ChatsScreenState extends State<ChatsScreen> {
                       'users',
                       arrayContains: FirebaseAuth.instance.currentUser?.uid,
                     )
+                    .orderBy('last_message_date', descending: true)
                     .snapshots(),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
@@ -98,11 +103,7 @@ class _ChatsScreenState extends State<ChatsScreen> {
                             'https://randomuser.me/api/portraits/men/22.jpg',
                         name: chat['name'].toString(),
                         lastMessage: chat['lastMessage'].toString(),
-                        timestamp: (chat['timestamp'] ?? '' as Timestamp)
-                            .toDate()
-                            .toString()
-                            .substring(0, 10)
-                            .replaceAll('-', '.'),
+                        timestamp: chat['last_message_date'],
                       );
                     },
                   );

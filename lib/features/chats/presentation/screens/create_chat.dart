@@ -103,7 +103,7 @@ class _CreateChatState extends State<CreateChat> {
                     avatarUrl: 'https://randomuser.me/api/portraits/men/22.jpg',
                     name: user['full_name'].toString(),
                     lastMessage: '',
-                    timestamp: '',
+                    timestamp: null,
                   );
                 },
               );
