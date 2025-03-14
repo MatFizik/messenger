@@ -1,8 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:messenger/features/auth/presentation/screens/auth_screen.dart';
 import 'package:messenger/features/chats/presentation/screens/chat_screen.dart';
 import 'package:messenger/features/chats/presentation/widgets/chat_tile_widget.dart';
 import 'package:messenger/features/chats/presentation/widgets/create_chat.dart';
@@ -83,7 +81,9 @@ class _ChatsScreenState extends State<ChatsScreen> {
                     return const Center(child: CircularProgressIndicator());
                   }
                   if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                    return const Center(child: Text('Чатов нет'));
+                    return const Center(
+                      child: Text('Чатов нет'),
+                    );
                   }
 
                   var chats = snapshot.data!.docs;
@@ -110,21 +110,8 @@ class _ChatsScreenState extends State<ChatsScreen> {
               ),
             ),
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                ElevatedButton.icon(
-                  onPressed: () async {
-                    await FirebaseAuth.instance.signOut();
-                    Navigator.of(context).pushReplacement(
-                      MaterialPageRoute(
-                          builder: (context) => const AuthScreen()),
-                    );
-                  },
-                  label: const Text('Exit'),
-                  icon: const Icon(
-                    Icons.exit_to_app,
-                  ),
-                ),
                 ElevatedButton.icon(
                   onPressed: () => createChat(),
                   label: const Text('Create chat'),
