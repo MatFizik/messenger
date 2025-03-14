@@ -32,9 +32,9 @@ class _SearchTextfieldState extends State<CustomSearchTextfield> {
   @override
   Widget build(BuildContext context) {
     return SearchBar(
-      shadowColor: WidgetStateProperty.all(Colors.transparent),
       onChanged: (value) => _onSearchChanged(value),
       hintText: 'Search...',
+      shadowColor: WidgetStateProperty.all(Colors.transparent),
       padding: const WidgetStatePropertyAll(
         EdgeInsets.only(left: 14),
       ),
