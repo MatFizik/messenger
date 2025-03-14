@@ -1,19 +1,23 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:messenger/features/auth/firebase/firebase_services.dart';
-import 'package:messenger/features/auth/presentation/screens/register_screen.dart';
 import 'package:messenger/features/chats/presentation/screens/main_chats_screen.dart';
 
-class AuthScreen extends StatefulWidget {
-  const AuthScreen({super.key});
+class RegisterScreen extends StatefulWidget {
+  const RegisterScreen({super.key});
 
   @override
-  State<AuthScreen> createState() => _AuthScreenState();
+  State<RegisterScreen> createState() => _RegisterScreenState();
 }
 
 void _onNext(
-    BuildContext context, String email, String password, bool isAuth) async {
-  final user = await signInUser(email, password);
+  BuildContext context,
+  String email,
+  String password,
+  String name,
+  String lastName,
+) async {
+  var user = signUpUser(email, password, name, lastName);
   if (user != null) {
     Navigator.of(context).pushReplacement(
       MaterialPageRoute(builder: (context) => const ChatsScreen()),
@@ -21,9 +25,11 @@ void _onNext(
   }
 }
 
-class _AuthScreenState extends State<AuthScreen> {
+class _RegisterScreenState extends State<RegisterScreen> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+  TextEditingController nameController = TextEditingController();
+  TextEditingController lastNameController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -49,23 +55,24 @@ class _AuthScreenState extends State<AuthScreen> {
                       controller: passwordController,
                     ),
                     SizedBox(height: 26),
+                    CupertinoTextField(
+                      placeholder: 'Name',
+                      controller: nameController,
+                    ),
+                    SizedBox(height: 26),
+                    CupertinoTextField(
+                      placeholder: 'Last Name',
+                      controller: lastNameController,
+                    ),
+                    SizedBox(height: 26),
                     ElevatedButton(
                       onPressed: () {
                         _onNext(
                           context,
                           emailController.text,
                           passwordController.text,
-                          true,
-                        );
-                      },
-                      child: const Text('Войти'),
-                    ),
-                    ElevatedButton(
-                      onPressed: () {
-                        Navigator.of(context).pushReplacement(
-                          MaterialPageRoute(
-                            builder: (context) => const RegisterScreen(),
-                          ),
+                          nameController.text,
+                          lastNameController.text,
                         );
                       },
                       child: const Text('Регистрация'),

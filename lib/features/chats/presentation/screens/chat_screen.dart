@@ -1,63 +1,112 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:messenger/features/chats/presentation/widgets/messenge_bubble_widget.dart';
 import 'package:messenger/features/chats/presentation/widgets/messenge_own_bubble_widget.dart';
 
 class ChatScreen extends StatefulWidget {
-  const ChatScreen({super.key});
+  final String chatId;
+
+  const ChatScreen({
+    super.key,
+    required this.chatId,
+  });
 
   @override
   State<ChatScreen> createState() => _ChatScreenState();
 }
+
+final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+TextEditingController _controller = TextEditingController();
 
 class _ChatScreenState extends State<ChatScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(),
-      body: const Padding(
-        padding: EdgeInsets.all(10.0),
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 24.0),
         child: Column(
           children: [
-            SingleChildScrollView(
-              child: Column(
-                children: [
-                  MessageBubbleWidget(
-                    message: 'Привет, как ты?',
-                    time: '10:00',
-                  ),
-                  MessengeOwnBubbleWidget(
-                    message: 'Нормально, спасибо',
-                    time: '10:01',
-                  ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(vertical: 20.0),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: Divider(thickness: 1),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 8.0),
-                          child: Text(
-                            'Сегодня',
-                          ),
-                        ),
-                        Expanded(
-                          child: Divider(thickness: 1),
-                        ),
-                      ],
+            Expanded(
+              child: StreamBuilder<QuerySnapshot>(
+                stream: _firestore
+                    .collection('messenges')
+                    .where(
+                      'chat_id',
+                      isEqualTo: widget.chatId.toString(),
+                    )
+                    .orderBy('date_send', descending: true)
+                    .snapshots(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                  if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                    return const Center(
+                      child: Text('Здесь пока нет сообщений'),
+                    );
+                  }
+
+                  var messenges = snapshot.data!.docs;
+
+                  return ListView.builder(
+                    reverse: true,
+                    itemCount: messenges.length,
+                    itemBuilder: (context, index) {
+                      var messenge = messenges[index];
+                      return Column(
+                        children: [
+                          messenge['sender'].toString() !=
+                                  FirebaseAuth.instance.currentUser?.uid
+                              ? MessageBubbleWidget(
+                                  message: messenge['text'].toString(),
+                                  time: (messenge['date_send'] as Timestamp)
+                                      .toDate()
+                                      .toString()
+                                      .substring(11, 16),
+                                )
+                              : MessengeOwnBubbleWidget(
+                                  message: messenge['text'].toString(),
+                                  time: (messenge['date_send'] as Timestamp)
+                                      .toDate()
+                                      .toString()
+                                      .substring(11, 16),
+                                ),
+                        ],
+                      );
+                    },
+                  );
+                },
+              ),
+            ),
+            Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: _controller,
+                    decoration: const InputDecoration(
+                      hintText: 'Введите сообщение',
                     ),
                   ),
-                  MessengeOwnBubbleWidget(
-                    message: 'Как сам?',
-                    time: '10:02',
-                  ),
-                  MessageBubbleWidget(
-                    message: 'Да и я тоже нормально',
-                    time: '10:03',
-                  ),
-                ],
-              ),
+                ),
+                const SizedBox(width: 8),
+                IconButton(
+                  onPressed: () {
+                    if (_controller.text.isNotEmpty) {
+                      _firestore.collection('messenges').add({
+                        'chat_id': widget.chatId,
+                        'sender': FirebaseAuth.instance.currentUser?.uid,
+                        'text': _controller.text,
+                        'date_send': Timestamp.now(),
+                      });
+                      _controller.clear();
+                    }
+                  },
+                  icon: const Icon(Icons.send),
+                ),
+              ],
             )
           ],
         ),
