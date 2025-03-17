@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:messenger/common/constant/assets.dart';
+import 'package:messenger/common/widgets/textfields/custom_textfield.dart';
 import 'package:messenger/features/auth/firebase/firebase_services.dart';
 import 'package:messenger/features/auth/presentation/screens/register_screen.dart';
 import 'package:messenger/features/chats/presentation/screens/main_chats_screen.dart';
@@ -24,6 +26,7 @@ void _onNext(
 class _AuthScreenState extends State<AuthScreen> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -33,44 +36,52 @@ class _AuthScreenState extends State<AuthScreen> {
           children: [
             Expanded(
               child: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Text('Auth Screen'),
-                    SizedBox(height: 16),
-                    CupertinoTextField(
-                      placeholder: 'Email',
-                      controller: emailController,
-                    ),
-                    SizedBox(height: 16),
-                    CupertinoTextField(
-                      placeholder: 'Password',
-                      controller: passwordController,
-                    ),
-                    SizedBox(height: 26),
-                    ElevatedButton(
-                      onPressed: () {
-                        _onNext(
-                          context,
-                          emailController.text,
-                          passwordController.text,
-                          true,
-                        );
-                      },
-                      child: const Text('Войти'),
-                    ),
-                    ElevatedButton(
-                      onPressed: () {
-                        Navigator.of(context).pushReplacement(
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Image.asset(
+                        Assets.authImage,
+                        width: 300,
+                      ),
+                      Text(
+                        'Авторизация',
+                        style: Theme.of(context).textTheme.titleLarge,
+                      ),
+                      const SizedBox(height: 36),
+                      CustomTextfield(
+                        controller: emailController,
+                        labelText: 'Email',
+                      ),
+                      const SizedBox(height: 16),
+                      CustomTextfield(
+                        controller: passwordController,
+                        labelText: 'Password',
+                      ),
+                      const SizedBox(height: 26),
+                      ElevatedButton(
+                        onPressed: () {
+                          _onNext(
+                            context,
+                            emailController.text,
+                            passwordController.text,
+                            true,
+                          );
+                        },
+                        child: const Text('Войти'),
+                      ),
+                      const SizedBox(height: 16),
+                      TextButton(
+                        onPressed: () => Navigator.of(context).push(
                           MaterialPageRoute(
                             builder: (context) => const RegisterScreen(),
                           ),
-                        );
-                      },
-                      child: const Text('Регистрация'),
-                    )
-                  ],
+                        ),
+                        child: const Text('Еще не зарегистрированы?'),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),

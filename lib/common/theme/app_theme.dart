@@ -42,6 +42,30 @@ class AppTheme {
       elevation: const WidgetStatePropertyAll(0),
       backgroundColor: const WidgetStatePropertyAll(AppColors.lightBgSecondary),
     ),
+
+    // Кнопки-------------------------------------------------------------------
+    textButtonTheme: TextButtonThemeData(
+      style: ButtonStyle(
+        padding: const WidgetStatePropertyAll(
+          EdgeInsets.all(16),
+        ),
+        foregroundColor: WidgetStateProperty.all(AppColors.blue),
+      ),
+    ),
+    elevatedButtonTheme: ElevatedButtonThemeData(
+      style: ButtonStyle(
+        minimumSize: WidgetStateProperty.all(
+          const Size(double.infinity, 58),
+        ),
+        backgroundColor: WidgetStateProperty.all(AppColors.darkBgPrimary),
+        foregroundColor: WidgetStateProperty.all(AppColors.textPrimary),
+        shape: WidgetStateProperty.all(
+          RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
+      ),
+    ),
   );
 
   // Темная тема
