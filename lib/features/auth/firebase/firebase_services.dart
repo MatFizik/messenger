@@ -24,6 +24,10 @@ Future<ResponseModel?> signInUser(String email, String password) async {
   }
 }
 
+void signOutUser() {
+  FirebaseAuth.instance.signOut();
+}
+
 Future<ResponseModel?> signUpUser(
   String email,
   String password,
