@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:messenger/common/constant/assets.dart';
+import 'package:messenger/common/models/response_model.dart';
+import 'package:messenger/common/widgets/snackbar/snackbar.dart';
 import 'package:messenger/common/widgets/textfields/custom_textfield.dart';
 import 'package:messenger/features/auth/firebase/firebase_services.dart';
 import 'package:messenger/features/chats/presentation/screens/main_chats_screen.dart';
@@ -12,29 +14,35 @@ class RegisterScreen extends StatefulWidget {
   State<RegisterScreen> createState() => _RegisterScreenState();
 }
 
-void _onNext(
-  BuildContext context,
-  String email,
-  String password,
-  String name,
-  String lastName,
-) async {
-  signUpUser(email, password, name, lastName).then(
-    (v) {
-      if (v != null) {
-        return Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => const ChatsScreen()),
-        );
-      }
-    },
-  );
-}
-
 class _RegisterScreenState extends State<RegisterScreen> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   TextEditingController nameController = TextEditingController();
   TextEditingController lastNameController = TextEditingController();
+
+  void _onNext(
+    String email,
+    String password,
+    String name,
+    String lastName,
+  ) async {
+    signUpUser(email, password, name, lastName).then(
+      (res) {
+        if (res?.type == ResponseType.success) {
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) => const ChatsScreen()),
+          );
+        } else {
+          return AppSnackBar.showSnackBar(
+            context,
+            res?.message ?? 'Что-то пошло не так',
+            status: SnackBarStatuses.error,
+          );
+        }
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -77,7 +85,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       ElevatedButton(
                         onPressed: () {
                           _onNext(
-                            context,
                             emailController.text,
                             passwordController.text,
                             nameController.text,

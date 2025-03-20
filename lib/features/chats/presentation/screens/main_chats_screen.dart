@@ -109,18 +109,18 @@ class _ChatsScreenState extends State<ChatsScreen> {
                 },
               ),
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                ElevatedButton.icon(
-                  onPressed: () => createChat(),
-                  label: const Text('Create chat'),
-                  icon: const Icon(
-                    Icons.add,
-                  ),
-                ),
-              ],
-            ),
+            // Row(
+            //   mainAxisAlignment: MainAxisAlignment.end,
+            //   children: [
+            //     ElevatedButton.icon(
+            //       onPressed: () => createChat(),
+            //       label: const Text('Create chat'),
+            //       icon: const Icon(
+            //         Icons.add,
+            //       ),
+            //     ),
+            //   ],
+            // ),
           ],
         ),
       ),

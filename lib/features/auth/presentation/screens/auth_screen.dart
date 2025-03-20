@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:messenger/common/constant/assets.dart';
+import 'package:messenger/common/models/response_model.dart';
+import 'package:messenger/common/widgets/snackbar/snackbar.dart';
 import 'package:messenger/common/widgets/textfields/custom_textfield.dart';
 import 'package:messenger/features/auth/firebase/firebase_services.dart';
 import 'package:messenger/features/auth/presentation/screens/register_screen.dart';
@@ -13,19 +15,31 @@ class AuthScreen extends StatefulWidget {
   State<AuthScreen> createState() => _AuthScreenState();
 }
 
-void _onNext(
-    BuildContext context, String email, String password, bool isAuth) async {
-  final user = await signInUser(email, password);
-  if (user != null) {
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute(builder: (context) => const ChatsScreen()),
-    );
-  }
-}
-
 class _AuthScreenState extends State<AuthScreen> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+
+  void _onNext(String email, String password) async {
+    final res = await signInUser(email, password);
+    if (res?.type == ResponseType.success) {
+      AppSnackBar.showSnackBar(
+        context,
+        res?.message ?? 'Успешный вход',
+        status: SnackBarStatuses.success,
+      );
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (context) => const ChatsScreen(),
+        ),
+      );
+    } else {
+      AppSnackBar.showSnackBar(
+        context,
+        res?.message ?? 'Что-то пошло не так',
+        status: SnackBarStatuses.error,
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -63,10 +77,8 @@ class _AuthScreenState extends State<AuthScreen> {
                       ElevatedButton(
                         onPressed: () {
                           _onNext(
-                            context,
                             emailController.text,
                             passwordController.text,
-                            true,
                           );
                         },
                         child: const Text('Войти'),

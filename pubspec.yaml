@@ -16,6 +16,7 @@ dependencies:
   firebase_auth: ^5.5.1
   bloc: ^9.0.0
   flutter_bloc: ^9.1.0
+  toastification: ^2.3.0
   
 
 dev_dependencies:
