@@ -1,11 +1,13 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:messenger/common/theme/app_colors.dart';
 
 class ChatTileWidget extends StatelessWidget {
   final VoidCallback onTap;
-  final String avatarUrl;
+  final String? avatarUrl;
   final String name;
   final String lastMessage;
-  final String timestamp;
+  final Timestamp? timestamp;
 
   const ChatTileWidget({
     super.key,
@@ -15,6 +17,53 @@ class ChatTileWidget extends StatelessWidget {
     required this.lastMessage,
     required this.timestamp,
   });
+
+  String parseDate(Timestamp? timestamp) {
+    if (timestamp == null) return '';
+    DateTime date = timestamp.toDate();
+    if (-1 * date.difference(DateTime.now()).inSeconds < 60) {
+      return 'Только что';
+    } else if (-1 * date.difference(DateTime.now()).inMinutes < 5) {
+      return '${-1 * date.difference(DateTime.now()).inMinutes} минут назад';
+    } else if (-1 * date.difference(DateTime.now()).inDays == 0) {
+      return date.toString().substring(11, 16);
+    } else {
+      return timestamp.toDate().toString().substring(0, 16);
+    }
+  }
+
+  Widget getAvatar() {
+    String firstName = name.split(' ')[0];
+    String lastName = name.split(' ')[1];
+    if (avatarUrl != null && avatarUrl != '') {
+      return CircleAvatar(
+        radius: 30,
+        backgroundImage: NetworkImage(avatarUrl!),
+      );
+    } else {
+      return Container(
+        width: 60,
+        height: 60,
+        decoration: const BoxDecoration(
+          shape: BoxShape.circle,
+          gradient: LinearGradient(
+            colors: [AppColors.blue, AppColors.green],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+        ),
+        alignment: Alignment.center,
+        child: Text(
+          firstName[0].toUpperCase() + lastName[0].toUpperCase(),
+          style: const TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
+        ),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,39 +79,30 @@ class ChatTileWidget extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    CircleAvatar(
-                      radius: 30,
-                      backgroundImage: NetworkImage(avatarUrl),
-                    ),
+                    getAvatar(),
                     const SizedBox(width: 10),
                     Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                      crossAxisAlignment: lastMessage != ''
+                          ? CrossAxisAlignment.start
+                          : CrossAxisAlignment.center,
                       children: [
                         Text(
                           name,
-                          style: const TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.bold,
-                          ),
+                          style: Theme.of(context).textTheme.bodyMedium,
                         ),
                         const SizedBox(height: 2),
-                        Text(
-                          lastMessage,
-                          style: const TextStyle(
-                            fontSize: 12,
-                            color: Colors.grey,
+                        if (lastMessage != '')
+                          Text(
+                            lastMessage,
+                            style: Theme.of(context).textTheme.bodySmall,
                           ),
-                        ),
                       ],
                     ),
                   ],
                 ),
                 Text(
-                  timestamp,
-                  style: const TextStyle(
-                    fontSize: 12,
-                    color: Colors.grey,
-                  ),
+                  parseDate(timestamp),
+                  style: Theme.of(context).textTheme.bodySmall,
                   textAlign: TextAlign.right,
                 ),
               ],

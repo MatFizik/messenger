@@ -21,6 +21,23 @@ final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 TextEditingController _controller = TextEditingController();
 
 class _ChatScreenState extends State<ChatScreen> {
+  void _sendMessenge() {
+    if (_controller.text.isNotEmpty) {
+      _firestore.collection('messenges').add({
+        'chat_id': widget.chatId,
+        'sender': FirebaseAuth.instance.currentUser?.uid,
+        'text': _controller.text,
+        'date_send': Timestamp.now(),
+      });
+      _firestore.collection('chats').doc(widget.chatId).update({
+        'lastMessage': _controller.text,
+        'last_message_date': Timestamp.now(),
+      });
+
+      _controller.clear();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -94,15 +111,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 const SizedBox(width: 8),
                 IconButton(
                   onPressed: () {
-                    if (_controller.text.isNotEmpty) {
-                      _firestore.collection('messenges').add({
-                        'chat_id': widget.chatId,
-                        'sender': FirebaseAuth.instance.currentUser?.uid,
-                        'text': _controller.text,
-                        'date_send': Timestamp.now(),
-                      });
-                      _controller.clear();
-                    }
+                    _sendMessenge();
                   },
                   icon: const Icon(Icons.send),
                 ),
