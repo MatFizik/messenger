@@ -33,8 +33,14 @@ class ChatTileWidget extends StatelessWidget {
   }
 
   Widget getAvatar() {
-    String firstName = name.split(' ')[0];
-    String lastName = name.split(' ')[1];
+    String firstName = 'A';
+    String lastName = 'A';
+    if (name.split(' ').length < 2) {
+      firstName = name.split(' ')[0];
+      lastName = name.split(' ')[0];
+    } else {
+      lastName = name.split(' ')[1];
+    }
     if (avatarUrl != null && avatarUrl != '') {
       return CircleAvatar(
         radius: 30,
@@ -86,9 +92,12 @@ class ChatTileWidget extends StatelessWidget {
                           ? CrossAxisAlignment.start
                           : CrossAxisAlignment.center,
                       children: [
-                        Text(
-                          name,
-                          style: Theme.of(context).textTheme.bodyMedium,
+                        SizedBox(
+                          width: 150,
+                          child: Text(
+                            name,
+                            style: Theme.of(context).textTheme.bodyMedium,
+                          ),
                         ),
                         const SizedBox(height: 2),
                         if (lastMessage != '')

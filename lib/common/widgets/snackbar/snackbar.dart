@@ -24,6 +24,7 @@ class AppSnackBar {
         icon = Icons.warning;
         backgroundColor = Colors.orange;
       } else if (status == SnackBarStatuses.success) {
+        backgroundColor = Colors.green;
         icon = Icons.check_circle;
       }
 

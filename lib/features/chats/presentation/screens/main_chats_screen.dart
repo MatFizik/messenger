@@ -97,12 +97,35 @@ class _ChatsScreenState extends State<ChatsScreen> {
                     itemCount: chats.length,
                     itemBuilder: (context, index) {
                       var chat = chats[index];
-                      return ChatTileWidget(
-                        onTap: () => _openChatScreen(chat.id.trim()),
-                        avatarUrl: null,
-                        name: chat['name'].toString(),
-                        lastMessage: chat['lastMessage'].toString(),
-                        timestamp: chat['last_message_date'],
+                      return Dismissible(
+                        background: Container(
+                          color: Colors.red,
+                          child: const Align(
+                            alignment: Alignment.centerRight,
+                            child: Padding(
+                              padding: EdgeInsets.only(right: 16.0),
+                              child: Icon(
+                                Icons.delete,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ),
+                        onDismissed: (direction) {
+                          _firestore.collection('chats').doc(chat.id).update({
+                            'users': FieldValue.arrayRemove(
+                                [FirebaseAuth.instance.currentUser?.uid])
+                          });
+                        },
+                        direction: DismissDirection.endToStart,
+                        key: Key(chat.id),
+                        child: ChatTileWidget(
+                          onTap: () => _openChatScreen(chat.id.trim()),
+                          avatarUrl: null,
+                          name: chat['name'].toString(),
+                          lastMessage: chat['lastMessage'].toString(),
+                          timestamp: chat['last_message_date'],
+                        ),
                       );
                     },
                   );

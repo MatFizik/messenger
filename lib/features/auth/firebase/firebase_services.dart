@@ -8,12 +8,9 @@ final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
 Future<ResponseModel?> signInUser(String email, String password) async {
   try {
-    final String base64Email = base64Encode(utf8.encode(email));
-    final String base64Password = base64Encode(utf8.encode(password));
-
     await FirebaseAuth.instance.signInWithEmailAndPassword(
-      email: base64Email,
-      password: base64Password,
+      email: email,
+      password: password,
     );
     return ResponseModel(
       type: ResponseType.success,
