@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -90,8 +92,7 @@ class _CreateChatState extends State<CreateChat> {
               final currentUserId = FirebaseAuth.instance.currentUser?.uid;
 
               var users = snapshot.data!.docs.where((user) {
-                return user.id !=
-                    currentUserId; // Исключаем текущего пользователя
+                return user.id != currentUserId;
               }).toList();
 
               return ListView.builder(
@@ -101,7 +102,8 @@ class _CreateChatState extends State<CreateChat> {
                   return ChatTileWidget(
                     onTap: () => _openChatScreen(context, user.id),
                     avatarUrl: null,
-                    name: user['full_name'].toString(),
+                    name:
+                        utf8.decode(base64Decode(user['full_name'].toString())),
                     lastMessage: '',
                     timestamp: null,
                   );

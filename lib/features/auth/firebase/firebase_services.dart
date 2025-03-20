@@ -32,18 +32,25 @@ Future<ResponseModel?> signUpUser(
 ) async {
   try {
     final String base64Name = base64Encode(utf8.encode(name));
-    final String base64LastName = base64Encode(utf8.encode(password));
+    final String base64LastName = base64Encode(utf8.encode(lastName));
+    final String base64FullName = base64Encode(utf8.encode('$name$lastName'));
 
-    await FirebaseAuth.instance.createUserWithEmailAndPassword(
+    UserCredential userCredential =
+        await FirebaseAuth.instance.createUserWithEmailAndPassword(
       email: email,
       password: password,
     );
 
-    var newUser = _firestore.collection('users').doc();
+    userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
+      email: email,
+      password: password,
+    );
+
+    var newUser = _firestore.collection('users').doc(userCredential.user!.uid);
     await newUser.set({
       'name': base64Name,
       'lastName': base64LastName,
-      'full_name': '$base64Name $base64LastName',
+      'full_name': base64FullName,
     });
 
     return ResponseModel(

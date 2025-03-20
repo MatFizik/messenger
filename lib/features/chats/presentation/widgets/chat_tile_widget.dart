@@ -8,14 +8,16 @@ class ChatTileWidget extends StatelessWidget {
   final String name;
   final String lastMessage;
   final Timestamp? timestamp;
+  final bool divider;
 
   const ChatTileWidget({
     super.key,
     required this.onTap,
-    required this.avatarUrl,
     required this.name,
     required this.lastMessage,
     required this.timestamp,
+    this.avatarUrl,
+    this.divider = true,
   });
 
   String parseDate(Timestamp? timestamp) {
@@ -35,12 +37,17 @@ class ChatTileWidget extends StatelessWidget {
   Widget getAvatar() {
     String firstName = 'A';
     String lastName = 'A';
-    if (name.split(' ').length < 2) {
-      firstName = name.split(' ')[0];
-      lastName = name.split(' ')[0];
-    } else {
-      lastName = name.split(' ')[1];
+    print('$name qwertyytrewq');
+    if (name != '' && name != ' ') {
+      if (name.split(' ').length > 1) {
+        firstName = name.split(' ')[0];
+        lastName = name.split(' ')[1];
+      } else {
+        lastName = name.split(' ')[0];
+        firstName = name.split(' ')[0];
+      }
     }
+
     if (avatarUrl != null && avatarUrl != '') {
       return CircleAvatar(
         radius: 30,
@@ -116,7 +123,7 @@ class ChatTileWidget extends StatelessWidget {
                 ),
               ],
             ),
-            const Divider(thickness: 1),
+            if (divider) const Divider(thickness: 1),
           ],
         ),
       ),
