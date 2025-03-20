@@ -8,6 +8,7 @@ import 'package:messenger/bloc/cubit/theme_cubit.dart';
 import 'package:messenger/common/models/user_model.dart';
 import 'package:messenger/common/theme/app_colors.dart';
 import 'package:messenger/common/widgets/snackbar/snackbar.dart';
+import 'package:messenger/features/auth/firebase/firebase_services.dart';
 import 'package:messenger/features/auth/presentation/screens/auth_screen.dart';
 import 'package:messenger/features/chats/presentation/widgets/chat_tile_widget.dart';
 
@@ -53,6 +54,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
     }
   }
 
+  void onExit() async {
+    signOutUser();
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(builder: (context) => const AuthScreen()),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     bool isDarkTheme =
@@ -96,10 +104,29 @@ class _SettingsScreenState extends State<SettingsScreen> {
             const Divider(),
             const SizedBox(height: 24),
             InkWell(
-              onTap: () async {
-                await FirebaseAuth.instance.signOut();
-                Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(builder: (context) => const AuthScreen()),
+              onTap: () {
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: const Text('Подтверждение'),
+                      content: const Text('Вы уверены, что хотите выйти?'),
+                      actions: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                          child: const Text('Отмена'),
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            onExit();
+                          },
+                          child: const Text('Выйти'),
+                        ),
+                      ],
+                    );
+                  },
                 );
               },
               child: Container(
