@@ -16,6 +16,9 @@ class ChatsScreen extends StatefulWidget {
 
 class _ChatsScreenState extends State<ChatsScreen> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  List<QueryDocumentSnapshot<Object?>>? chats;
+  List<QueryDocumentSnapshot<Object?>>? filteredChats;
+  bool isSearching = false;
 
   void _openChatScreen(String chatId) {
     Navigator.of(context).push(
@@ -33,7 +36,18 @@ class _ChatsScreenState extends State<ChatsScreen> {
     );
   }
 
-  void onSearch(String value) {}
+  void onSearch(String value) {
+    isSearching = true;
+    value = value.toLowerCase();
+    setState(() {
+      filteredChats = chats
+          ?.where((element) => element['name']
+              .toString()
+              .toLowerCase()
+              .contains(value.toLowerCase()))
+          .toList();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -66,7 +80,7 @@ class _ChatsScreenState extends State<ChatsScreen> {
         child: Column(
           children: [
             CustomSearchTextfield(
-              onChanged: onSearch,
+              onChanged: (v) => onSearch(v),
               filter: true,
             ),
             const SizedBox(height: 24),
@@ -91,12 +105,14 @@ class _ChatsScreenState extends State<ChatsScreen> {
                     );
                   }
 
-                  var chats = snapshot.data!.docs;
+                  chats = snapshot.data!.docs;
 
                   return ListView.builder(
-                    itemCount: chats.length,
+                    itemCount:
+                        isSearching ? filteredChats?.length : chats?.length,
                     itemBuilder: (context, index) {
-                      var chat = chats[index];
+                      var chat =
+                          isSearching ? filteredChats![index] : chats?[index];
                       return Dismissible(
                         background: Container(
                           color: Colors.red,
@@ -112,19 +128,19 @@ class _ChatsScreenState extends State<ChatsScreen> {
                           ),
                         ),
                         onDismissed: (direction) {
-                          _firestore.collection('chats').doc(chat.id).update({
+                          _firestore.collection('chats').doc(chat?.id).update({
                             'users': FieldValue.arrayRemove(
                                 [FirebaseAuth.instance.currentUser?.uid])
                           });
                         },
                         direction: DismissDirection.endToStart,
-                        key: Key(chat.id),
+                        key: Key(chat?.id ?? ''),
                         child: ChatTileWidget(
-                          onTap: () => _openChatScreen(chat.id.trim()),
+                          onTap: () => _openChatScreen(chat?.id.trim() ?? ''),
                           avatarUrl: null,
-                          name: chat['name'].toString(),
-                          lastMessage: chat['lastMessage'].toString(),
-                          timestamp: chat['last_message_date'],
+                          name: chat?['name'].toString() ?? '',
+                          lastMessage: chat?['lastMessage'].toString() ?? '',
+                          timestamp: chat?['last_message_date'],
                         ),
                       );
                     },

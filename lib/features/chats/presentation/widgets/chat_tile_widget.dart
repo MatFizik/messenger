@@ -37,7 +37,6 @@ class ChatTileWidget extends StatelessWidget {
   Widget getAvatar() {
     String firstName = 'A';
     String lastName = 'A';
-    print('$name qwertyytrewq');
     if (name != '' && name != ' ') {
       if (name.split(' ').length > 1) {
         firstName = name.split(' ')[0];
