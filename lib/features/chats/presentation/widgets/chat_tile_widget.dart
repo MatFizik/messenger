@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:messenger/common/theme/app_colors.dart';
+import 'package:messenger/common/utils/letters_avatar/letters_avatar_widget.dart';
 
 class ChatTileWidget extends StatelessWidget {
   final VoidCallback onTap;
@@ -34,49 +34,6 @@ class ChatTileWidget extends StatelessWidget {
     }
   }
 
-  Widget getAvatar() {
-    String firstName = 'A';
-    String lastName = 'A';
-    if (name != '' && name != ' ') {
-      if (name.split(' ').length > 1) {
-        firstName = name.split(' ')[0];
-        lastName = name.split(' ')[1];
-      } else {
-        lastName = name.split(' ')[0];
-        firstName = name.split(' ')[0];
-      }
-    }
-
-    if (avatarUrl != null && avatarUrl != '') {
-      return CircleAvatar(
-        radius: 30,
-        backgroundImage: NetworkImage(avatarUrl!),
-      );
-    } else {
-      return Container(
-        width: 60,
-        height: 60,
-        decoration: const BoxDecoration(
-          shape: BoxShape.circle,
-          gradient: LinearGradient(
-            colors: [AppColors.blue, AppColors.green],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-        ),
-        alignment: Alignment.center,
-        child: Text(
-          firstName[0].toUpperCase() + lastName[0].toUpperCase(),
-          style: const TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-          ),
-        ),
-      );
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return InkWell(
@@ -91,7 +48,7 @@ class ChatTileWidget extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    getAvatar(),
+                    getAvatar(name, avatarUrl),
                     const SizedBox(width: 10),
                     Column(
                       crossAxisAlignment: lastMessage != ''

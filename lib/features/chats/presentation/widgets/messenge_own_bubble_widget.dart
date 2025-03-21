@@ -29,15 +29,22 @@ class MessengeOwnBubbleWidget extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            Text(
-              message,
-              style: const TextStyle(fontSize: 16, color: Colors.black),
+            Flexible(
+              child: Text(
+                message,
+                style: const TextStyle(
+                  fontSize: 16,
+                  color: Colors.black,
+                ),
+              ),
             ),
             const SizedBox(width: 6),
             Text(
               time,
-              style:
-                  TextStyle(fontSize: 12, color: Colors.black.withOpacity(0.5)),
+              style: TextStyle(
+                fontSize: 12,
+                color: Colors.black.withOpacity(0.5),
+              ),
             ),
           ],
         ),

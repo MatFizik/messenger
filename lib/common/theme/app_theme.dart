@@ -47,6 +47,19 @@ class AppTheme {
     ),
 
     // Кнопки-------------------------------------------------------------------
+    buttonTheme: const ButtonThemeData(
+      colorScheme: ColorScheme(
+        brightness: Brightness.light,
+        primary: AppColors.darkBgPrimary,
+        onPrimary: AppColors.darkBgPrimary,
+        secondary: AppColors.lightBgSecondary,
+        onSecondary: AppColors.lightBgSecondary,
+        error: AppColors.red,
+        onError: AppColors.red,
+        surface: AppColors.blue,
+        onSurface: AppColors.blue,
+      ),
+    ),
     textButtonTheme: TextButtonThemeData(
       style: ButtonStyle(
         padding: const WidgetStatePropertyAll(
@@ -115,6 +128,7 @@ class AppTheme {
           WidgetStateProperty.all(AppColors.textPrimary.withOpacity(0.1)),
       dividerHeight: 0,
     ),
+    inputDecorationTheme: InputDecorationTheme(),
     searchBarTheme: const SearchBarThemeData(
       hintStyle: WidgetStatePropertyAll(
         TextStyle(color: AppColors.textTertiary),

@@ -3,14 +3,18 @@ import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:messenger/common/theme/app_colors.dart';
+import 'package:messenger/common/utils/letters_avatar/letters_avatar_widget.dart';
 import 'package:messenger/features/chats/presentation/widgets/messenge_bubble_widget.dart';
 import 'package:messenger/features/chats/presentation/widgets/messenge_own_bubble_widget.dart';
 
 class ChatScreen extends StatefulWidget {
   final String chatId;
+  final String name;
 
   const ChatScreen({
     super.key,
+    required this.name,
     required this.chatId,
   });
 
@@ -45,11 +49,26 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        title: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 5),
+          child: Row(
+            children: [
+              SizedBox(
+                width: 50,
+                child: getAvatar(widget.name, ''),
+              ),
+              const SizedBox(width: 8),
+              Text(widget.name),
+            ],
+          ),
+        ),
+      ),
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 24.0),
+        padding: const EdgeInsets.only(left: 10.0, right: 10.0, bottom: 24.0),
         child: Column(
           children: [
+            const Divider(),
             Expanded(
               child: StreamBuilder<QuerySnapshot>(
                 stream: _firestore
@@ -102,22 +121,53 @@ class _ChatScreenState extends State<ChatScreen> {
                 },
               ),
             ),
+            const Divider(),
+            const SizedBox(height: 14),
             Row(
               children: [
                 Expanded(
                   child: TextField(
                     controller: _controller,
+                    maxLines: 5,
+                    minLines: 1,
+                    style: const TextStyle(fontSize: 16, height: 1.4),
                     decoration: const InputDecoration(
-                      hintText: 'Введите сообщение',
+                      filled: true,
+                      fillColor: AppColors.lightBgSecondary,
+                      hintStyle: TextStyle(color: AppColors.textTertiaryLight),
+                      hintText: 'Сообщение',
+                      contentPadding: EdgeInsets.symmetric(
+                        vertical: 10,
+                        horizontal: 16,
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(12)),
+                        borderSide: BorderSide(
+                          color: AppColors.lightBgSecondary,
+                        ),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(12)),
+                        borderSide: BorderSide(
+                          color: AppColors.lightBgSecondary,
+                        ),
+                      ),
                     ),
                   ),
                 ),
                 const SizedBox(width: 8),
-                IconButton(
-                  onPressed: () {
-                    _sendMessenge();
-                  },
-                  icon: const Icon(Icons.send),
+                InkWell(
+                  onTap: () => _sendMessenge(),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12),
+                      color:
+                          Theme.of(context).buttonTheme.colorScheme?.secondary,
+                    ),
+                    width: 42,
+                    height: 42,
+                    child: const Icon(Icons.send),
+                  ),
                 ),
               ],
             )

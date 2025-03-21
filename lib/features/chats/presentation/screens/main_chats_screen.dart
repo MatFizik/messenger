@@ -31,10 +31,13 @@ class _ChatsScreenState extends State<ChatsScreen> {
     super.initState();
   }
 
-  void _openChatScreen(String chatId) {
+  void _openChatScreen(String chatId, String name) {
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) => ChatScreen(chatId: chatId),
+        builder: (context) => ChatScreen(
+          chatId: chatId,
+          name: name,
+        ),
       ),
     );
   }
@@ -172,7 +175,24 @@ class _ChatsScreenState extends State<ChatsScreen> {
                         direction: DismissDirection.endToStart,
                         key: Key(chat?.id ?? ''),
                         child: ChatTileWidget(
-                          onTap: () => _openChatScreen(chat.id.trim()),
+                          onTap: () => _openChatScreen(
+                            chat.id.trim(),
+                            userModel?.fullName ==
+                                    (
+                                      utf8.decode(
+                                        base64Decode(
+                                          chat['name_first'].toString(),
+                                        ),
+                                      ),
+                                    )
+                                ? utf8.decode(
+                                    base64Decode(
+                                        chat['name_second'].toString()),
+                                  )
+                                : utf8.decode(
+                                    base64Decode(chat['name_first'].toString()),
+                                  ),
+                          ),
                           avatarUrl: null,
                           name: userModel?.fullName ==
                                   (utf8.decode(base64Decode(
