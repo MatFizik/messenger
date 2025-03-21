@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -22,6 +24,8 @@ TextEditingController _controller = TextEditingController();
 
 class _ChatScreenState extends State<ChatScreen> {
   void _sendMessenge() {
+    final String base64LastMessage =
+        base64Encode(utf8.encode(_controller.text));
     if (_controller.text.isNotEmpty) {
       _firestore.collection('messenges').add({
         'chat_id': widget.chatId,
@@ -30,7 +34,7 @@ class _ChatScreenState extends State<ChatScreen> {
         'date_send': Timestamp.now(),
       });
       _firestore.collection('chats').doc(widget.chatId).update({
-        'lastMessage': _controller.text,
+        'lastMessage': base64LastMessage,
         'last_message_date': Timestamp.now(),
       });
 

@@ -49,8 +49,10 @@ class _CreateChatState extends State<CreateChat> {
         'users': [currentUser.uid, userId],
         'lastMessage': '',
         'messenges': [],
-        'name':
+        'name_first':
             '${await _firestore.collection('users').doc(userId).get().then((value) => value['full_name'])}',
+        'name_second':
+            '${await _firestore.collection('users').doc(currentUser.uid).get().then((value) => value['full_name'])}',
         'timestamp': FieldValue.serverTimestamp(),
       });
       chatId = newChatRef.id;
