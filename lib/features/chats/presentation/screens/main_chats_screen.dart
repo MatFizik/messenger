@@ -1,6 +1,10 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:messenger/common/models/user_model.dart';
+import 'package:messenger/common/widgets/snackbar/snackbar.dart';
 import 'package:messenger/features/chats/presentation/screens/chat_screen.dart';
 import 'package:messenger/features/chats/presentation/widgets/chat_tile_widget.dart';
 import 'package:messenger/features/chats/presentation/screens/create_chat.dart';
@@ -19,6 +23,13 @@ class _ChatsScreenState extends State<ChatsScreen> {
   List<QueryDocumentSnapshot<Object?>>? chats;
   List<QueryDocumentSnapshot<Object?>>? filteredChats;
   bool isSearching = false;
+  UserModel? userModel;
+
+  @override
+  void initState() {
+    loadUser();
+    super.initState();
+  }
 
   void _openChatScreen(String chatId) {
     Navigator.of(context).push(
@@ -47,6 +58,31 @@ class _ChatsScreenState extends State<ChatsScreen> {
               .contains(value.toLowerCase()))
           .toList();
     });
+  }
+
+  Future<void> loadUser() async {
+    String? uid = FirebaseAuth.instance.currentUser?.uid;
+    if (uid != null) {
+      try {
+        DocumentSnapshot<Map<String, dynamic>> userDoc =
+            await _firestore.collection('users').doc(uid).get();
+        if (userDoc.exists) {
+          setState(() {
+            userModel = UserModel.fromMap(userDoc.data()!);
+            userModel?.name = utf8.decode(base64Decode(userModel!.name));
+            userModel?.lastName =
+                utf8.decode(base64Decode(userModel!.lastName));
+            userModel?.fullName =
+                utf8.decode(base64Decode(userModel!.fullName ?? ''));
+          });
+        }
+      } catch (e) {
+        AppSnackBar.showSnackBar(
+          context,
+          'Ошибка загрузки пользователя',
+        );
+      }
+    }
   }
 
   @override
@@ -128,7 +164,7 @@ class _ChatsScreenState extends State<ChatsScreen> {
                           ),
                         ),
                         onDismissed: (direction) {
-                          _firestore.collection('chats').doc(chat?.id).update({
+                          _firestore.collection('chats').doc(chat.id).update({
                             'users': FieldValue.arrayRemove(
                                 [FirebaseAuth.instance.currentUser?.uid])
                           });
@@ -136,11 +172,18 @@ class _ChatsScreenState extends State<ChatsScreen> {
                         direction: DismissDirection.endToStart,
                         key: Key(chat?.id ?? ''),
                         child: ChatTileWidget(
-                          onTap: () => _openChatScreen(chat?.id.trim() ?? ''),
+                          onTap: () => _openChatScreen(chat.id.trim()),
                           avatarUrl: null,
-                          name: chat?['name'].toString() ?? '',
-                          lastMessage: chat?['lastMessage'].toString() ?? '',
-                          timestamp: chat?['last_message_date'],
+                          name: userModel?.fullName ==
+                                  (utf8.decode(base64Decode(
+                                      chat?['name_first'].toString() ?? '')))
+                              ? utf8.decode(
+                                  base64Decode(chat!['name_second'].toString()))
+                              : utf8.decode(
+                                  base64Decode(chat!['name_first'].toString())),
+                          lastMessage: utf8.decode(
+                              base64Decode(chat['lastMessage'].toString())),
+                          timestamp: chat['last_message_date'],
                         ),
                       );
                     },

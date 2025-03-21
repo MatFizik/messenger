@@ -107,9 +107,13 @@ class ChatTileWidget extends StatelessWidget {
                         ),
                         const SizedBox(height: 2),
                         if (lastMessage != '')
-                          Text(
-                            lastMessage,
-                            style: Theme.of(context).textTheme.bodySmall,
+                          SizedBox(
+                            width: 200,
+                            child: Text(
+                              lastMessage,
+                              style: Theme.of(context).textTheme.bodySmall,
+                              overflow: TextOverflow.ellipsis,
+                            ),
                           ),
                       ],
                     ),
