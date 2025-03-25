@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:messenger/common/theme/app_colors.dart';
 import 'package:messenger/common/utils/letters_avatar/letters_avatar_widget.dart';
+import 'package:messenger/features/chats/presentation/widgets/divider_messenge_widget.dart';
 import 'package:messenger/features/chats/presentation/widgets/messenge_bubble_widget.dart';
 import 'package:messenger/features/chats/presentation/widgets/messenge_own_bubble_widget.dart';
 
@@ -27,6 +28,7 @@ final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 TextEditingController _controller = TextEditingController();
 
 class _ChatScreenState extends State<ChatScreen> {
+  Set<String> dates = {};
   void _sendMessenge() {
     final String base64LastMessage =
         base64Encode(utf8.encode(_controller.text));
@@ -43,6 +45,17 @@ class _ChatScreenState extends State<ChatScreen> {
       });
 
       _controller.clear();
+    }
+  }
+
+  Widget getDate(String date) {
+    if (dates.contains(date.substring(0, 10))) {
+      return const SizedBox();
+    } else {
+      dates.add(date.substring(0, 10));
+      return DividerMessengeWidget(
+        date: dates.last,
+      );
     }
   }
 
@@ -114,6 +127,11 @@ class _ChatScreenState extends State<ChatScreen> {
                                       .toString()
                                       .substring(11, 16),
                                 ),
+                          getDate(
+                            (messenge['date_send'] as Timestamp)
+                                .toDate()
+                                .toString(),
+                          ),
                         ],
                       );
                     },

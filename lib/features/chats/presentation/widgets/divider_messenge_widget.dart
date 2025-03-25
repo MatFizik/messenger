@@ -1,24 +1,25 @@
 import 'package:flutter/material.dart';
 
 class DividerMessengeWidget extends StatelessWidget {
-  const DividerMessengeWidget({super.key});
+  final String date;
+  const DividerMessengeWidget({super.key, required this.date});
 
   @override
   Widget build(BuildContext context) {
-    return const Padding(
-      padding: EdgeInsets.symmetric(vertical: 20.0),
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 20.0),
       child: Row(
         children: [
-          Expanded(
+          const Expanded(
             child: Divider(thickness: 1),
           ),
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: 8.0),
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
             child: Text(
-              'Сегодня', // доделать
+              date,
             ),
           ),
-          Expanded(
+          const Expanded(
             child: Divider(thickness: 1),
           ),
         ],
