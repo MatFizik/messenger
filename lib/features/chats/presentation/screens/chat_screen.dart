@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -30,12 +31,12 @@ TextEditingController _controller = TextEditingController();
 class _ChatScreenState extends State<ChatScreen> {
   void _sendMessenge() {
     final String base64LastMessage =
-        base64Encode(utf8.encode(_controller.text));
+        base64Encode(utf8.encode(_controller.text.trim()));
     if (_controller.text.isNotEmpty) {
       _firestore.collection('messenges').add({
         'chat_id': widget.chatId,
         'sender': FirebaseAuth.instance.currentUser?.uid,
-        'text': _controller.text,
+        'text': _controller.text.trim(),
         'date_send': Timestamp.now(),
       });
       _firestore.collection('chats').doc(widget.chatId).update({
@@ -107,7 +108,11 @@ class _ChatScreenState extends State<ChatScreen> {
           ),
         ),
         body: Padding(
-          padding: const EdgeInsets.only(left: 10.0, right: 10.0, bottom: 24.0),
+          padding: const EdgeInsets.only(
+            left: 10.0,
+            right: 10.0,
+            bottom: 24.0,
+          ),
           child: Column(
             children: [
               const Divider(),
@@ -164,59 +169,65 @@ class _ChatScreenState extends State<ChatScreen> {
                   },
                 ),
               ),
-              const Divider(),
-              const SizedBox(height: 14),
-              Row(
-                children: [
-                  Expanded(
-                    child: TextField(
-                      controller: _controller,
-                      maxLines: 5,
-                      minLines: 1,
-                      style: const TextStyle(fontSize: 16, height: 1.4),
-                      decoration: const InputDecoration(
-                        filled: true,
-                        fillColor: AppColors.lightBgSecondary,
-                        hintStyle:
-                            TextStyle(color: AppColors.textTertiaryLight),
-                        hintText: 'Сообщение',
-                        contentPadding: EdgeInsets.symmetric(
-                          vertical: 10,
-                          horizontal: 16,
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(12)),
-                          borderSide: BorderSide(
-                            color: AppColors.lightBgSecondary,
+              Padding(
+                padding: const EdgeInsets.only(
+                  top: 14,
+                  left: 12,
+                  right: 12,
+                ),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: TextField(
+                        controller: _controller,
+                        maxLines: 5,
+                        minLines: 1,
+                        style: const TextStyle(fontSize: 16, height: 1.4),
+                        decoration: const InputDecoration(
+                          filled: true,
+                          fillColor: AppColors.lightBgSecondary,
+                          hintStyle:
+                              TextStyle(color: AppColors.textTertiaryLight),
+                          hintText: 'Сообщение',
+                          contentPadding: EdgeInsets.symmetric(
+                            vertical: 10,
+                            horizontal: 16,
                           ),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(12)),
-                          borderSide: BorderSide(
-                            color: AppColors.lightBgSecondary,
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(12)),
+                            borderSide: BorderSide(
+                              color: AppColors.lightBgSecondary,
+                            ),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(12)),
+                            borderSide: BorderSide(
+                              color: AppColors.lightBgSecondary,
+                            ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                  const SizedBox(width: 8),
-                  InkWell(
-                    onTap: () => _sendMessenge(),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(12),
-                        color: Theme.of(context)
-                            .buttonTheme
-                            .colorScheme
-                            ?.secondary,
+                    const SizedBox(width: 8),
+                    InkWell(
+                      onTap: () => _sendMessenge(),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                          color: Theme.of(context)
+                              .buttonTheme
+                              .colorScheme
+                              ?.secondary,
+                        ),
+                        width: 45,
+                        height: 45,
+                        child: const Icon(Icons.send),
                       ),
-                      width: 42,
-                      height: 42,
-                      child: const Icon(Icons.send),
                     ),
-                  ),
-                ],
-              )
+                  ],
+                ),
+              ),
+              SizedBox(height: Platform.isIOS ? 32 : 16),
             ],
           ),
         ),
