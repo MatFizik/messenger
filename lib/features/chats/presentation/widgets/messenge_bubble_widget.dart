@@ -13,7 +13,7 @@ class MessageBubbleWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10.0),
+      padding: const EdgeInsets.only(right: 50.0),
       child: Align(
         alignment: Alignment.centerLeft,
         child: Container(
@@ -36,6 +36,7 @@ class MessageBubbleWidget extends StatelessWidget {
                   message,
                   style: const TextStyle(
                     fontSize: 16,
+                    fontWeight: FontWeight.normal,
                     color: Colors.black,
                   ),
                 ),
@@ -45,7 +46,8 @@ class MessageBubbleWidget extends StatelessWidget {
                 time,
                 style: TextStyle(
                   fontSize: 12,
-                  color: Colors.black.withOpacity(0.5),
+                  fontWeight: FontWeight.normal,
+                  color: Colors.black.withValues(alpha: 0.5),
                 ),
               ),
             ],

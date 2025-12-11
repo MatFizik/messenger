@@ -12,42 +12,46 @@ class MessengeOwnBubbleWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Align(
-      alignment: Alignment.centerRight,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-        margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-        decoration: const BoxDecoration(
-          color: Color.fromARGB(255, 192, 239, 255),
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(16),
-            topRight: Radius.circular(16),
-            bottomLeft: Radius.circular(16),
+    return Padding(
+      padding: const EdgeInsets.only(left: 50.0),
+      child: Align(
+        alignment: Alignment.centerRight,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+          decoration: const BoxDecoration(
+            color: Color.fromARGB(255, 192, 239, 255),
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(16),
+              topRight: Radius.circular(16),
+              bottomLeft: Radius.circular(16),
+            ),
           ),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            Flexible(
-              child: Text(
-                message,
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.normal,
-                  color: Colors.black,
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Flexible(
+                child: Text(
+                  message,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.normal,
+                    color: Colors.black,
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(width: 6),
-            Text(
-              time,
-              style: TextStyle(
-                fontSize: 12,
-                color: Colors.black.withOpacity(0.5),
+              const SizedBox(width: 6),
+              Text(
+                time,
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.normal,
+                  color: Colors.black.withValues(alpha: 0.5),
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

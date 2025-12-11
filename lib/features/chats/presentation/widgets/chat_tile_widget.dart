@@ -51,7 +51,7 @@ class ChatTileWidget extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    getAvatar(name, avatarUrl),
+                    getAvatar(name: name, avatarUrl: avatarUrl),
                     const SizedBox(width: 10),
                     Column(
                       crossAxisAlignment: lastMessage != ''

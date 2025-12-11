@@ -93,87 +93,93 @@ class _ChatScreenState extends State<ChatScreen> {
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
         appBar: AppBar(
-          title: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 5),
-            child: Row(
-              children: [
-                SizedBox(
-                  width: 50,
-                  child: getAvatar(widget.name, ''),
-                ),
-                const SizedBox(width: 8),
-                Text(widget.name),
-              ],
+          shape: Border(
+            bottom: BorderSide(
+              color: Theme.of(context).dividerColor,
+              width: 1,
             ),
           ),
-        ),
-        body: Padding(
-          padding: const EdgeInsets.only(
-            left: 10.0,
-            right: 10.0,
-            bottom: 24.0,
-          ),
-          child: Column(
+          title: Row(
             children: [
-              const Divider(),
-              Expanded(
-                child: StreamBuilder<QuerySnapshot>(
-                  stream: _firestore
-                      .collection('messenges')
-                      .where(
-                        'chat_id',
-                        isEqualTo: widget.chatId.toString(),
-                      )
-                      .orderBy('date_send', descending: true)
-                      .snapshots(),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const Center(child: CircularProgressIndicator());
-                    }
-                    if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                      return const Center(
-                        child: Text('Здесь пока нет сообщений'),
-                      );
-                    }
-
-                    var messenges = snapshot.data!.docs;
-
-                    return ListView.builder(
-                      reverse: true,
-                      itemCount: messenges.length,
-                      itemBuilder: (context, index) {
-                        var messenge = messenges[index];
-                        return Column(
-                          children: [
-                            getDate(index, messenges),
-                            messenge['sender'].toString() !=
-                                    FirebaseAuth.instance.currentUser?.uid
-                                ? MessageBubbleWidget(
-                                    message: messenge['text'].toString(),
-                                    time: (messenge['date_send'] as Timestamp)
-                                        .toDate()
-                                        .toString()
-                                        .substring(11, 16),
-                                  )
-                                : MessengeOwnBubbleWidget(
-                                    message: messenge['text'].toString(),
-                                    time: (messenge['date_send'] as Timestamp)
-                                        .toDate()
-                                        .toString()
-                                        .substring(11, 16),
-                                  ),
-                          ],
-                        );
-                      },
+              SizedBox(
+                width: 40,
+                child: getAvatar(name: widget.name, fontSize: 16),
+              ),
+              const SizedBox(width: 8),
+              Text(widget.name, style: Theme.of(context).textTheme.titleMedium),
+            ],
+          ),
+        ),
+        body: Column(
+          children: [
+            Expanded(
+              child: StreamBuilder<QuerySnapshot>(
+                stream: _firestore
+                    .collection('messenges')
+                    .where(
+                      'chat_id',
+                      isEqualTo: widget.chatId.toString(),
+                    )
+                    .orderBy('date_send', descending: true)
+                    .snapshots(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                  if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                    return const Center(
+                      child: Text('Здесь пока нет сообщений'),
                     );
-                  },
+                  }
+
+                  var messenges = snapshot.data!.docs;
+
+                  return ListView.builder(
+                    reverse: true,
+                    itemCount: messenges.length,
+                    itemBuilder: (context, index) {
+                      var messenge = messenges[index];
+                      return Column(
+                        children: [
+                          getDate(index, messenges),
+                          messenge['sender'].toString() !=
+                                  FirebaseAuth.instance.currentUser?.uid
+                              ? MessageBubbleWidget(
+                                  message: messenge['text'].toString(),
+                                  time: (messenge['date_send'] as Timestamp)
+                                      .toDate()
+                                      .toString()
+                                      .substring(11, 16),
+                                )
+                              : MessengeOwnBubbleWidget(
+                                  message: messenge['text'].toString(),
+                                  time: (messenge['date_send'] as Timestamp)
+                                      .toDate()
+                                      .toString()
+                                      .substring(11, 16),
+                                ),
+                        ],
+                      );
+                    },
+                  );
+                },
+              ),
+            ),
+
+            Container(
+              decoration: BoxDecoration(
+                border: Border.fromBorderSide(
+                  BorderSide(
+                    color: Theme.of(context).dividerColor,
+                  ),
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.only(
+              child: Padding(
+                padding: EdgeInsets.only(
                   top: 14,
                   left: 12,
                   right: 12,
+                  bottom: Platform.isIOS ? 36 : 18,
                 ),
                 child: Row(
                   children: [
@@ -227,9 +233,9 @@ class _ChatScreenState extends State<ChatScreen> {
                   ],
                 ),
               ),
-              SizedBox(height: Platform.isIOS ? 32 : 16),
-            ],
-          ),
+            ),
+            //SizedBox(height: Platform.isIOS ? 32 : 16),
+          ],
         ),
       ),
     );
