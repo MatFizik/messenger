@@ -29,23 +29,94 @@ final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 TextEditingController _controller = TextEditingController();
 
 class _ChatScreenState extends State<ChatScreen> {
+  String? editingMessageId;
+
   void _sendMessenge() {
-    final String base64LastMessage =
-        base64Encode(utf8.encode(_controller.text.trim()));
-    if (_controller.text.isNotEmpty) {
+    final String text = _controller.text.trim();
+    if (text.isEmpty) return;
+
+    final String base64LastMessage = base64Encode(utf8.encode(text));
+
+    if (editingMessageId != null) {
+      _firestore.collection('messenges').doc(editingMessageId).update({
+        'text': text,
+        'edited': true,
+      });
+      setState(() {
+        editingMessageId = null;
+      });
+    } else {
       _firestore.collection('messenges').add({
         'chat_id': widget.chatId,
         'sender': FirebaseAuth.instance.currentUser?.uid,
-        'text': _controller.text.trim(),
+        'text': text,
         'date_send': Timestamp.now(),
       });
       _firestore.collection('chats').doc(widget.chatId).update({
         'lastMessage': base64LastMessage,
         'last_message_date': Timestamp.now(),
       });
-
-      _controller.clear();
     }
+
+    _controller.clear();
+  }
+
+  void _showOptions(
+    BuildContext context,
+    String messageId,
+    String currentText,
+  ) {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        return SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                shape: Border(
+                  bottom: BorderSide(
+                    color: Theme.of(context).dividerColor,
+                    width: 1,
+                  ),
+                ),
+                leading: const Icon(Icons.edit),
+                title: const Text('Изменить'),
+                onTap: () {
+                  Navigator.pop(context);
+                  setState(() {
+                    editingMessageId = messageId;
+                    _controller.text = currentText;
+                  });
+                },
+              ),
+              ListTile(
+                shape: Border(
+                  bottom: BorderSide(
+                    color: Theme.of(context).dividerColor,
+                    width: 1,
+                  ),
+                ),
+                leading: const Icon(Icons.delete, color: Colors.red),
+                title: const Text(
+                  'Удалить',
+                  style: TextStyle(color: Colors.red),
+                ),
+                onTap: () {
+                  Navigator.pop(context);
+                  _firestore.collection('messenges').doc(messageId).delete();
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.cancel),
+                title: const Text('Отмена'),
+                onTap: () => Navigator.pop(context),
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 
   Widget getDate(int index, List<QueryDocumentSnapshot> messages) {
@@ -103,10 +174,16 @@ class _ChatScreenState extends State<ChatScreen> {
             children: [
               SizedBox(
                 width: 40,
-                child: getAvatar(name: widget.name, fontSize: 16),
+                child: getAvatar(
+                  name: widget.name,
+                  fontSize: 16,
+                ),
               ),
               const SizedBox(width: 8),
-              Text(widget.name, style: Theme.of(context).textTheme.titleMedium),
+              Text(
+                widget.name,
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
             ],
           ),
         ),
@@ -139,24 +216,36 @@ class _ChatScreenState extends State<ChatScreen> {
                     itemCount: messenges.length,
                     itemBuilder: (context, index) {
                       var messenge = messenges[index];
+                      final data = messenge.data() as Map<String, dynamic>;
                       return Column(
                         children: [
                           getDate(index, messenges),
-                          messenge['sender'].toString() !=
+                          data['sender'].toString() !=
                                   FirebaseAuth.instance.currentUser?.uid
                               ? MessageBubbleWidget(
-                                  message: messenge['text'].toString(),
-                                  time: (messenge['date_send'] as Timestamp)
+                                  message: data['text'].toString(),
+                                  edited: data['edited'] ?? false,
+                                  time: (data['date_send'] as Timestamp)
                                       .toDate()
                                       .toString()
                                       .substring(11, 16),
                                 )
-                              : MessengeOwnBubbleWidget(
-                                  message: messenge['text'].toString(),
-                                  time: (messenge['date_send'] as Timestamp)
-                                      .toDate()
-                                      .toString()
-                                      .substring(11, 16),
+                              : GestureDetector(
+                                  onLongPress: () {
+                                    _showOptions(
+                                      context,
+                                      messenge.id,
+                                      data['text'].toString(),
+                                    );
+                                  },
+                                  child: MessengeOwnBubbleWidget(
+                                    message: data['text'].toString(),
+                                    edited: data['edited'] ?? false,
+                                    time: (data['date_send'] as Timestamp)
+                                        .toDate()
+                                        .toString()
+                                        .substring(11, 16),
+                                  ),
                                 ),
                         ],
                       );
@@ -165,7 +254,6 @@ class _ChatScreenState extends State<ChatScreen> {
                 },
               ),
             ),
-
             Container(
               decoration: BoxDecoration(
                 border: Border.fromBorderSide(
@@ -234,7 +322,6 @@ class _ChatScreenState extends State<ChatScreen> {
                 ),
               ),
             ),
-            //SizedBox(height: Platform.isIOS ? 32 : 16),
           ],
         ),
       ),

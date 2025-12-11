@@ -3,11 +3,13 @@ import 'package:flutter/material.dart';
 class MessageBubbleWidget extends StatelessWidget {
   final String message;
   final String time;
+  final bool edited;
 
   const MessageBubbleWidget({
     super.key,
     required this.message,
     required this.time,
+    this.edited = false,
   });
 
   @override
@@ -42,6 +44,18 @@ class MessageBubbleWidget extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 6),
+              if (edited)
+                Padding(
+                  padding: const EdgeInsets.only(right: 6.0),
+                  child: Text(
+                    'edited',
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.normal,
+                      color: Colors.black.withValues(alpha: 0.5),
+                    ),
+                  ),
+                ),
               Text(
                 time,
                 style: TextStyle(
