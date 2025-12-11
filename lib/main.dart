@@ -6,6 +6,7 @@ import 'package:messenger/common/theme/app_theme.dart';
 import 'package:messenger/features/auth/presentation/screens/auth_screen.dart';
 import 'package:messenger/features/chats/presentation/screens/main_chats_screen.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:messenger/features/chats/presentation/screens/splash_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -27,7 +28,7 @@ class MessengerApp extends StatelessWidget {
             theme: state.brightness != Brightness.dark
                 ? AppTheme.lightTheme
                 : AppTheme.darkTheme,
-            home: const AuthWrapper(),
+            home: const SplashScreen(),
           );
         },
       ),

@@ -69,6 +69,9 @@ class _ChatsScreenState extends State<ChatsScreen> {
       try {
         DocumentSnapshot<Map<String, dynamic>> userDoc =
             await _firestore.collection('users').doc(uid).get();
+
+        if (!mounted) return;
+
         if (userDoc.exists) {
           setState(() {
             userModel = UserModel.fromMap(userDoc.data()!);
@@ -80,10 +83,12 @@ class _ChatsScreenState extends State<ChatsScreen> {
           });
         }
       } catch (e) {
-        AppSnackBar.showSnackBar(
-          context,
-          'Ошибка загрузки пользователя',
-        );
+        if (mounted) {
+          AppSnackBar.showSnackBar(
+            context,
+            'Ошибка загрузки пользователя',
+          );
+        }
       }
     }
   }

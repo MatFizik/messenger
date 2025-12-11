@@ -30,7 +30,10 @@ class ChatTileWidget extends StatelessWidget {
     } else if (-1 * date.difference(DateTime.now()).inDays == 0) {
       return date.toString().substring(11, 16);
     } else {
-      return timestamp.toDate().toString().substring(0, 16);
+      String day = date.day.toString().padLeft(2, '0');
+      String month = date.month.toString().padLeft(2, '0');
+      String year = date.year.toString();
+      return '$day.$month.$year';
     }
   }
 

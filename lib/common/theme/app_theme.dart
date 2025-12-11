@@ -120,7 +120,7 @@ class AppTheme {
       color: AppColors.darkBgSecondary,
       thickness: 1,
     ),
-    tabBarTheme: TabBarTheme(
+    tabBarTheme: TabBarThemeData(
       labelColor: AppColors.textPrimary,
       indicatorColor: AppColors.textPrimary,
       unselectedLabelColor: AppColors.textTertiary,

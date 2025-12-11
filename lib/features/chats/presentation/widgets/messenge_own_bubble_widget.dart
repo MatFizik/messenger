@@ -18,7 +18,7 @@ class MessengeOwnBubbleWidget extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
         decoration: const BoxDecoration(
-          color: Color(0xFF3CED78),
+          color: Color.fromARGB(255, 192, 239, 255),
           borderRadius: BorderRadius.only(
             topLeft: Radius.circular(16),
             topRight: Radius.circular(16),
@@ -34,6 +34,7 @@ class MessengeOwnBubbleWidget extends StatelessWidget {
                 message,
                 style: const TextStyle(
                   fontSize: 16,
+                  fontWeight: FontWeight.normal,
                   color: Colors.black,
                 ),
               ),

@@ -28,7 +28,6 @@ final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 TextEditingController _controller = TextEditingController();
 
 class _ChatScreenState extends State<ChatScreen> {
-  Set<String> dates = {};
   void _sendMessenge() {
     final String base64LastMessage =
         base64Encode(utf8.encode(_controller.text));
@@ -48,148 +47,178 @@ class _ChatScreenState extends State<ChatScreen> {
     }
   }
 
-  Widget getDate(String date) {
-    if (dates.contains(date.substring(0, 10))) {
-      return const SizedBox();
+  Widget getDate(int index, List<QueryDocumentSnapshot> messages) {
+    final currentMessage = messages[index];
+    final currentDate = (currentMessage['date_send'] as Timestamp).toDate();
+
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final yesterday = today.subtract(const Duration(days: 1));
+    final messageDate =
+        DateTime(currentDate.year, currentDate.month, currentDate.day);
+
+    String dateString;
+    if (messageDate == today) {
+      dateString = 'Сегодня';
+    } else if (messageDate == yesterday) {
+      dateString = 'Вчера';
     } else {
-      dates.add(date.substring(0, 10));
-      return DividerMessengeWidget(
-        date: dates.last,
-      );
+      String day = currentDate.day.toString().padLeft(2, '0');
+      String month = currentDate.month.toString().padLeft(2, '0');
+      String year = (currentDate.year % 100).toString().padLeft(2, '0');
+      dateString = '$day.$month.$year';
     }
+
+    if (index == messages.length - 1) {
+      return DividerMessengeWidget(date: dateString);
+    }
+
+    final previousMessage = messages[index + 1];
+    final previousDate = (previousMessage['date_send'] as Timestamp).toDate();
+    final previousDateString = previousDate.toString().substring(0, 10);
+
+    final currentDateIso = currentDate.toString().substring(0, 10);
+
+    if (currentDateIso != previousDateString) {
+      return DividerMessengeWidget(date: dateString);
+    }
+
+    return const SizedBox();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 5),
-          child: Row(
-            children: [
-              SizedBox(
-                width: 50,
-                child: getAvatar(widget.name, ''),
-              ),
-              const SizedBox(width: 8),
-              Text(widget.name),
-            ],
-          ),
-        ),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.only(left: 10.0, right: 10.0, bottom: 24.0),
-        child: Column(
-          children: [
-            const Divider(),
-            Expanded(
-              child: StreamBuilder<QuerySnapshot>(
-                stream: _firestore
-                    .collection('messenges')
-                    .where(
-                      'chat_id',
-                      isEqualTo: widget.chatId.toString(),
-                    )
-                    .orderBy('date_send', descending: true)
-                    .snapshots(),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(child: CircularProgressIndicator());
-                  }
-                  if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                    return const Center(
-                      child: Text('Здесь пока нет сообщений'),
-                    );
-                  }
-
-                  var messenges = snapshot.data!.docs;
-
-                  return ListView.builder(
-                    reverse: true,
-                    itemCount: messenges.length,
-                    itemBuilder: (context, index) {
-                      var messenge = messenges[index];
-                      return Column(
-                        children: [
-                          messenge['sender'].toString() !=
-                                  FirebaseAuth.instance.currentUser?.uid
-                              ? MessageBubbleWidget(
-                                  message: messenge['text'].toString(),
-                                  time: (messenge['date_send'] as Timestamp)
-                                      .toDate()
-                                      .toString()
-                                      .substring(11, 16),
-                                )
-                              : MessengeOwnBubbleWidget(
-                                  message: messenge['text'].toString(),
-                                  time: (messenge['date_send'] as Timestamp)
-                                      .toDate()
-                                      .toString()
-                                      .substring(11, 16),
-                                ),
-                          getDate(
-                            (messenge['date_send'] as Timestamp)
-                                .toDate()
-                                .toString(),
-                          ),
-                        ],
-                      );
-                    },
-                  );
-                },
-              ),
-            ),
-            const Divider(),
-            const SizedBox(height: 14),
-            Row(
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      child: Scaffold(
+        appBar: AppBar(
+          title: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 5),
+            child: Row(
               children: [
-                Expanded(
-                  child: TextField(
-                    controller: _controller,
-                    maxLines: 5,
-                    minLines: 1,
-                    style: const TextStyle(fontSize: 16, height: 1.4),
-                    decoration: const InputDecoration(
-                      filled: true,
-                      fillColor: AppColors.lightBgSecondary,
-                      hintStyle: TextStyle(color: AppColors.textTertiaryLight),
-                      hintText: 'Сообщение',
-                      contentPadding: EdgeInsets.symmetric(
-                        vertical: 10,
-                        horizontal: 16,
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(12)),
-                        borderSide: BorderSide(
-                          color: AppColors.lightBgSecondary,
-                        ),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(12)),
-                        borderSide: BorderSide(
-                          color: AppColors.lightBgSecondary,
-                        ),
-                      ),
-                    ),
-                  ),
+                SizedBox(
+                  width: 50,
+                  child: getAvatar(widget.name, ''),
                 ),
                 const SizedBox(width: 8),
-                InkWell(
-                  onTap: () => _sendMessenge(),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(12),
-                      color:
-                          Theme.of(context).buttonTheme.colorScheme?.secondary,
-                    ),
-                    width: 42,
-                    height: 42,
-                    child: const Icon(Icons.send),
-                  ),
-                ),
+                Text(widget.name),
               ],
-            )
-          ],
+            ),
+          ),
+        ),
+        body: Padding(
+          padding: const EdgeInsets.only(left: 10.0, right: 10.0, bottom: 24.0),
+          child: Column(
+            children: [
+              const Divider(),
+              Expanded(
+                child: StreamBuilder<QuerySnapshot>(
+                  stream: _firestore
+                      .collection('messenges')
+                      .where(
+                        'chat_id',
+                        isEqualTo: widget.chatId.toString(),
+                      )
+                      .orderBy('date_send', descending: true)
+                      .snapshots(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+                    if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                      return const Center(
+                        child: Text('Здесь пока нет сообщений'),
+                      );
+                    }
+
+                    var messenges = snapshot.data!.docs;
+
+                    return ListView.builder(
+                      reverse: true,
+                      itemCount: messenges.length,
+                      itemBuilder: (context, index) {
+                        var messenge = messenges[index];
+                        return Column(
+                          children: [
+                            getDate(index, messenges),
+                            messenge['sender'].toString() !=
+                                    FirebaseAuth.instance.currentUser?.uid
+                                ? MessageBubbleWidget(
+                                    message: messenge['text'].toString(),
+                                    time: (messenge['date_send'] as Timestamp)
+                                        .toDate()
+                                        .toString()
+                                        .substring(11, 16),
+                                  )
+                                : MessengeOwnBubbleWidget(
+                                    message: messenge['text'].toString(),
+                                    time: (messenge['date_send'] as Timestamp)
+                                        .toDate()
+                                        .toString()
+                                        .substring(11, 16),
+                                  ),
+                          ],
+                        );
+                      },
+                    );
+                  },
+                ),
+              ),
+              const Divider(),
+              const SizedBox(height: 14),
+              Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: _controller,
+                      maxLines: 5,
+                      minLines: 1,
+                      style: const TextStyle(fontSize: 16, height: 1.4),
+                      decoration: const InputDecoration(
+                        filled: true,
+                        fillColor: AppColors.lightBgSecondary,
+                        hintStyle:
+                            TextStyle(color: AppColors.textTertiaryLight),
+                        hintText: 'Сообщение',
+                        contentPadding: EdgeInsets.symmetric(
+                          vertical: 10,
+                          horizontal: 16,
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(12)),
+                          borderSide: BorderSide(
+                            color: AppColors.lightBgSecondary,
+                          ),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(12)),
+                          borderSide: BorderSide(
+                            color: AppColors.lightBgSecondary,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  InkWell(
+                    onTap: () => _sendMessenge(),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(12),
+                        color: Theme.of(context)
+                            .buttonTheme
+                            .colorScheme
+                            ?.secondary,
+                      ),
+                      width: 42,
+                      height: 42,
+                      child: const Icon(Icons.send),
+                    ),
+                  ),
+                ],
+              )
+            ],
+          ),
         ),
       ),
     );

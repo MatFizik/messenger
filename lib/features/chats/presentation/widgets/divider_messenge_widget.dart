@@ -16,6 +16,10 @@ class DividerMessengeWidget extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
             child: Text(
+              style: const TextStyle(
+                fontWeight: FontWeight.normal,
+                color: Colors.grey,
+              ),
               date,
             ),
           ),
