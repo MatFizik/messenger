@@ -99,15 +99,26 @@ class _ChatsScreenState extends State<ChatsScreen> {
           children: [
             Text(
               'Чаты',
-              style: Theme.of(context).textTheme.titleLarge,
+              style: Theme.of(context).textTheme.titleMedium,
             ),
-            IconButton(
-              onPressed: () => Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => const SettingsScreen(),
+            Row(
+              children: [
+                IconButton(
+                  onPressed: () => createChat(),
+                  icon: const Icon(
+                    Icons.add,
+                    size: 32,
+                  ),
                 ),
-              ),
-              icon: const Icon(Icons.settings),
+                IconButton(
+                  onPressed: () => Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => const SettingsScreen(),
+                    ),
+                  ),
+                  icon: const Icon(Icons.settings),
+                ),
+              ],
             ),
           ],
         ),
@@ -210,18 +221,6 @@ class _ChatsScreenState extends State<ChatsScreen> {
                   );
                 },
               ),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                IconButton(
-                  onPressed: () => createChat(),
-                  icon: const Icon(
-                    Icons.add,
-                    size: 32,
-                  ),
-                ),
-              ],
             ),
           ],
         ),

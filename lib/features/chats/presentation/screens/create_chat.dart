@@ -48,6 +48,7 @@ class _CreateChatState extends State<CreateChat> {
         .doc(userId)
         .get()
         .then((value) => value['full_name']);
+
     if (chatId == null) {
       var newChatRef = _firestore.collection('chats').doc();
       await newChatRef.set({
@@ -55,8 +56,8 @@ class _CreateChatState extends State<CreateChat> {
         'lastMessage': '',
         'messenges': [],
         'name_first':
-            '${await _firestore.collection('users').doc(userId).get().then((value) => value['full_name'])}',
-        'name_second': currentUser.uid,
+            '${await _firestore.collection('users').doc(currentUser.uid).get().then((value) => value['full_name'])}',
+        'name_second': nameSecond,
         'timestamp': FieldValue.serverTimestamp(),
       });
       chatId = newChatRef.id;
