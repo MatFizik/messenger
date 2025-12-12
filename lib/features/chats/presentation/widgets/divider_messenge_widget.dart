@@ -9,22 +9,23 @@ class DividerMessengeWidget extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 20.0),
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Expanded(
-            child: Divider(thickness: 1),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
-            child: Text(
-              style: const TextStyle(
-                fontWeight: FontWeight.normal,
-                color: Colors.grey,
-              ),
-              date,
+          Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(12.0),
+              color: Colors.white.withValues(alpha: 0.5),
             ),
-          ),
-          const Expanded(
-            child: Divider(thickness: 1),
+            child: Padding(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 6.0, vertical: 2.0),
+              child: Text(
+                style: const TextStyle(
+                  fontWeight: FontWeight.normal,
+                ),
+                date,
+              ),
+            ),
           ),
         ],
       ),

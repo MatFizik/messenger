@@ -9,7 +9,7 @@ class AppTheme {
     highlightColor: AppColors.lightBgSecondary,
     scaffoldBackgroundColor: AppColors.lightBgPrimary,
     colorScheme: const ColorScheme.light(
-      primary: AppColors.green,
+      primary: AppColors.blue,
       secondary: AppColors.green,
     ),
     textTheme: const TextTheme(
@@ -20,6 +20,11 @@ class AppTheme {
           fontWeight: FontWeight.bold),
       bodySmall: TextStyle(color: AppColors.textTertiaryLight, fontSize: 12),
       titleLarge: TextStyle(color: AppColors.textPrimaryLight, fontSize: 32),
+      titleMedium: TextStyle(
+        color: AppColors.textPrimaryLight,
+        fontSize: 18,
+        fontWeight: FontWeight.w600,
+      ),
     ),
     appBarTheme: const AppBarTheme(
       backgroundColor: AppColors.lightBgPrimary,

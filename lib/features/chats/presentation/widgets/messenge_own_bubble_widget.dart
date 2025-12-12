@@ -21,9 +21,9 @@ class MessengeOwnBubbleWidget extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-          decoration: const BoxDecoration(
-            color: Color.fromARGB(255, 192, 239, 255),
-            borderRadius: BorderRadius.only(
+          decoration: BoxDecoration(
+            color: Theme.of(context).primaryColor,
+            borderRadius: const BorderRadius.only(
               topLeft: Radius.circular(16),
               topRight: Radius.circular(16),
               bottomLeft: Radius.circular(16),

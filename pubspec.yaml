@@ -33,4 +33,5 @@ flutter:
   assets:
     - assets/
     - assets/images/
+    - assets/images/chat_backgrounds/
     - assets/animations/

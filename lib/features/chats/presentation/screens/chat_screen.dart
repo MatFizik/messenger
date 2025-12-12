@@ -1,12 +1,13 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:messenger/common/constant/assets.dart';
 import 'package:messenger/common/theme/app_colors.dart';
 import 'package:messenger/common/utils/letters_avatar/letters_avatar_widget.dart';
 import 'package:messenger/common/widgets/animations/disintegration_widget.dart';
+import 'package:messenger/features/chats/presentation/widgets/chat_action_widget.dart';
 import 'package:messenger/features/chats/presentation/widgets/divider_messenge_widget.dart';
 import 'package:messenger/features/chats/presentation/widgets/messenge_bubble_widget.dart';
 import 'package:messenger/features/chats/presentation/widgets/messenge_own_bubble_widget.dart';
@@ -34,7 +35,7 @@ class _ChatScreenState extends State<ChatScreen> {
   String? editingMessageId;
   final Map<String, GlobalKey<DisintegrationWidgetState>> _messageKeys = {};
 
-  void _sendMessenge() {
+  void _sendMessage() {
     final String text = _controller.text.trim();
     if (text.isEmpty) return;
 
@@ -86,6 +87,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 leading: const Icon(Icons.edit),
                 title: const Text('Изменить'),
                 onTap: () {
+                  FocusScope.of(context).unfocus();
                   Navigator.pop(context);
                   setState(() {
                     editingMessageId = messageId;
@@ -106,6 +108,7 @@ class _ChatScreenState extends State<ChatScreen> {
                   style: TextStyle(color: Colors.red),
                 ),
                 onTap: () {
+                  FocusScope.of(context).unfocus();
                   Navigator.pop(context);
                   final key = _messageKeys[messageId];
                   if (key?.currentState != null) {
@@ -172,14 +175,16 @@ class _ChatScreenState extends State<ChatScreen> {
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
         appBar: AppBar(
-          shape: Border(
-            bottom: BorderSide(
-              color: Theme.of(context).dividerColor,
-              width: 1,
-            ),
-          ),
+          backgroundColor:
+              Theme.of(context).primaryColor.withValues(alpha: 0.1),
           title: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
+              const SizedBox(),
+              Text(
+                widget.name,
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
               SizedBox(
                 width: 40,
                 child: getAvatar(
@@ -187,165 +192,115 @@ class _ChatScreenState extends State<ChatScreen> {
                   fontSize: 16,
                 ),
               ),
-              const SizedBox(width: 8),
-              Text(
-                widget.name,
-                style: Theme.of(context).textTheme.titleMedium,
-              ),
             ],
           ),
         ),
-        body: Column(
-          children: [
-            Expanded(
-              child: StreamBuilder<QuerySnapshot>(
-                stream: _firestore
-                    .collection('messenges')
-                    .where(
-                      'chat_id',
-                      isEqualTo: widget.chatId.toString(),
-                    )
-                    .orderBy('date_send', descending: true)
-                    .snapshots(),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(child: CircularProgressIndicator());
-                  }
-                  if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                    return const Center(
-                      child: Text('Здесь пока нет сообщений'),
-                    );
-                  }
+        body: Container(
+          decoration: const BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage(
+                Assets.chatBackground_1,
+              ),
+              fit: BoxFit.cover,
+            ),
+          ),
+          child: Stack(
+            children: [
+              Positioned.fill(
+                child: StreamBuilder<QuerySnapshot>(
+                  stream: _firestore
+                      .collection('messenges')
+                      .where(
+                        'chat_id',
+                        isEqualTo: widget.chatId.toString(),
+                      )
+                      .orderBy('date_send', descending: true)
+                      .snapshots(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+                    if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                      return const Center(
+                        child: Text('Здесь пока нет сообщений'),
+                      );
+                    }
 
-                  var messenges = snapshot.data!.docs;
+                    var messenges = snapshot.data!.docs;
 
-                  return ListView.builder(
-                    reverse: true,
-                    itemCount: messenges.length,
-                    itemBuilder: (context, index) {
-                      var messenge = messenges[index];
-                      final data = messenge.data() as Map<String, dynamic>;
-                      final key = _messageKeys.putIfAbsent(messenge.id,
-                          () => GlobalKey<DisintegrationWidgetState>());
+                    return ListView.builder(
+                      padding: const EdgeInsets.only(
+                        bottom: 100,
+                        left: 12,
+                        right: 12,
+                      ),
+                      reverse: true,
+                      itemCount: messenges.length,
+                      itemBuilder: (context, index) {
+                        var messenge = messenges[index];
+                        final data = messenge.data() as Map<String, dynamic>;
+                        final key = _messageKeys.putIfAbsent(messenge.id,
+                            () => GlobalKey<DisintegrationWidgetState>());
 
-                      return Column(
-                        children: [
-                          getDate(index, messenges),
-                          data['sender'].toString() !=
-                                  FirebaseAuth.instance.currentUser?.uid
-                              ? MessageBubbleWidget(
-                                  message: data['text'].toString(),
-                                  edited: data['edited'] ?? false,
-                                  time: (data['date_send'] as Timestamp)
-                                      .toDate()
-                                      .toString()
-                                      .substring(11, 16),
-                                )
-                              : GestureDetector(
-                                  onLongPress: () async {
-                                    Vibration.vibrate(duration: 20);
-                                    _showOptions(
-                                      context,
-                                      messenge.id,
-                                      data['text'].toString(),
-                                    );
-                                  },
-                                  child: DisintegrationWidget(
-                                    key: key,
-                                    particleColor: AppColors.green,
-                                    onDisintegrated: () {
-                                      _firestore
-                                          .collection('messenges')
-                                          .doc(messenge.id)
-                                          .delete();
+                        return Column(
+                          children: [
+                            getDate(index, messenges),
+                            data['sender'].toString() !=
+                                    FirebaseAuth.instance.currentUser?.uid
+                                ? MessageBubbleWidget(
+                                    message: data['text'].toString(),
+                                    edited: data['edited'] ?? false,
+                                    time: (data['date_send'] as Timestamp)
+                                        .toDate()
+                                        .toString()
+                                        .substring(11, 16),
+                                  )
+                                : GestureDetector(
+                                    onLongPress: () async {
+                                      Vibration.vibrate(duration: 20);
+                                      _showOptions(
+                                        context,
+                                        messenge.id,
+                                        data['text'].toString(),
+                                      );
                                     },
-                                    child: MessengeOwnBubbleWidget(
-                                      message: data['text'].toString(),
-                                      edited: data['edited'] ?? false,
-                                      time: (data['date_send'] as Timestamp)
-                                          .toDate()
-                                          .toString()
-                                          .substring(11, 16),
+                                    child: DisintegrationWidget(
+                                      key: key,
+                                      particleColor: AppColors.green,
+                                      onDisintegrated: () {
+                                        _firestore
+                                            .collection('messenges')
+                                            .doc(messenge.id)
+                                            .delete();
+                                      },
+                                      child: MessengeOwnBubbleWidget(
+                                        message: data['text'].toString(),
+                                        edited: data['edited'] ?? false,
+                                        time: (data['date_send'] as Timestamp)
+                                            .toDate()
+                                            .toString()
+                                            .substring(11, 16),
+                                      ),
                                     ),
                                   ),
-                                ),
-                        ],
-                      );
-                    },
-                  );
-                },
-              ),
-            ),
-            Container(
-              decoration: BoxDecoration(
-                border: Border.fromBorderSide(
-                  BorderSide(
-                    color: Theme.of(context).dividerColor,
-                  ),
+                          ],
+                        );
+                      },
+                    );
+                  },
                 ),
               ),
-              child: Padding(
-                padding: EdgeInsets.only(
-                  top: 14,
-                  left: 12,
-                  right: 12,
-                  bottom: Platform.isIOS ? 36 : 18,
-                ),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: TextFormField(
-                        controller: _controller,
-                        maxLines: 5,
-                        minLines: 1,
-                        onFieldSubmitted: (value) => _sendMessenge(),
-                        style: const TextStyle(fontSize: 16, height: 1.4),
-                        decoration: const InputDecoration(
-                          filled: true,
-                          fillColor: AppColors.lightBgSecondary,
-                          hintStyle:
-                              TextStyle(color: AppColors.textTertiaryLight),
-                          hintText: 'Сообщение',
-                          contentPadding: EdgeInsets.symmetric(
-                            vertical: 10,
-                            horizontal: 16,
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(12)),
-                            borderSide: BorderSide(
-                              color: AppColors.lightBgSecondary,
-                            ),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(12)),
-                            borderSide: BorderSide(
-                              color: AppColors.lightBgSecondary,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    InkWell(
-                      onTap: () => _sendMessenge(),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(12),
-                          color: Theme.of(context)
-                              .buttonTheme
-                              .colorScheme
-                              ?.secondary,
-                        ),
-                        width: 45,
-                        height: 45,
-                        child: const Icon(Icons.send),
-                      ),
-                    ),
-                  ],
+              Positioned(
+                bottom: 0,
+                left: 0,
+                right: 0,
+                child: ChatActionWidget(
+                  controller: _controller,
+                  sendMessege: _sendMessage,
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
