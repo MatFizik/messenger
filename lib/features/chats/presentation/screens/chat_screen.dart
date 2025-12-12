@@ -6,9 +6,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:messenger/common/theme/app_colors.dart';
 import 'package:messenger/common/utils/letters_avatar/letters_avatar_widget.dart';
+import 'package:messenger/common/widgets/animations/disintegration_widget.dart';
 import 'package:messenger/features/chats/presentation/widgets/divider_messenge_widget.dart';
 import 'package:messenger/features/chats/presentation/widgets/messenge_bubble_widget.dart';
 import 'package:messenger/features/chats/presentation/widgets/messenge_own_bubble_widget.dart';
+import 'package:vibration/vibration.dart';
 
 class ChatScreen extends StatefulWidget {
   final String chatId;
@@ -30,6 +32,7 @@ TextEditingController _controller = TextEditingController();
 
 class _ChatScreenState extends State<ChatScreen> {
   String? editingMessageId;
+  final Map<String, GlobalKey<DisintegrationWidgetState>> _messageKeys = {};
 
   void _sendMessenge() {
     final String text = _controller.text.trim();
@@ -104,7 +107,12 @@ class _ChatScreenState extends State<ChatScreen> {
                 ),
                 onTap: () {
                   Navigator.pop(context);
-                  _firestore.collection('messenges').doc(messageId).delete();
+                  final key = _messageKeys[messageId];
+                  if (key?.currentState != null) {
+                    key!.currentState!.disintegrate();
+                  } else {
+                    _firestore.collection('messenges').doc(messageId).delete();
+                  }
                 },
               ),
               ListTile(
@@ -217,6 +225,9 @@ class _ChatScreenState extends State<ChatScreen> {
                     itemBuilder: (context, index) {
                       var messenge = messenges[index];
                       final data = messenge.data() as Map<String, dynamic>;
+                      final key = _messageKeys.putIfAbsent(messenge.id,
+                          () => GlobalKey<DisintegrationWidgetState>());
+
                       return Column(
                         children: [
                           getDate(index, messenges),
@@ -231,20 +242,31 @@ class _ChatScreenState extends State<ChatScreen> {
                                       .substring(11, 16),
                                 )
                               : GestureDetector(
-                                  onLongPress: () {
+                                  onLongPress: () async {
+                                    Vibration.vibrate(duration: 20);
                                     _showOptions(
                                       context,
                                       messenge.id,
                                       data['text'].toString(),
                                     );
                                   },
-                                  child: MessengeOwnBubbleWidget(
-                                    message: data['text'].toString(),
-                                    edited: data['edited'] ?? false,
-                                    time: (data['date_send'] as Timestamp)
-                                        .toDate()
-                                        .toString()
-                                        .substring(11, 16),
+                                  child: DisintegrationWidget(
+                                    key: key,
+                                    particleColor: AppColors.green,
+                                    onDisintegrated: () {
+                                      _firestore
+                                          .collection('messenges')
+                                          .doc(messenge.id)
+                                          .delete();
+                                    },
+                                    child: MessengeOwnBubbleWidget(
+                                      message: data['text'].toString(),
+                                      edited: data['edited'] ?? false,
+                                      time: (data['date_send'] as Timestamp)
+                                          .toDate()
+                                          .toString()
+                                          .substring(11, 16),
+                                    ),
                                   ),
                                 ),
                         ],
@@ -272,10 +294,11 @@ class _ChatScreenState extends State<ChatScreen> {
                 child: Row(
                   children: [
                     Expanded(
-                      child: TextField(
+                      child: TextFormField(
                         controller: _controller,
                         maxLines: 5,
                         minLines: 1,
+                        onFieldSubmitted: (value) => _sendMessenge(),
                         style: const TextStyle(fontSize: 16, height: 1.4),
                         decoration: const InputDecoration(
                           filled: true,
