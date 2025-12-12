@@ -19,7 +19,7 @@ Future<ResponseModel?> signInUser(String email, String password) async {
   } catch (e) {
     return ResponseModel(
       type: ResponseType.error,
-      message: e.toString(),
+      message: getMessageFromError(e),
     );
   }
 }
@@ -35,9 +35,10 @@ Future<ResponseModel?> signUpUser(
   String lastName,
 ) async {
   try {
-    final String base64Name = base64Encode(utf8.encode(name));
-    final String base64LastName = base64Encode(utf8.encode(lastName));
-    final String base64FullName = base64Encode(utf8.encode('$name$lastName'));
+    final String base64Name = base64Encode(utf8.encode(name.trim()));
+    final String base64LastName = base64Encode(utf8.encode(lastName.trim()));
+    final String base64FullName =
+        base64Encode(utf8.encode('${name.trim()} ${lastName.trim()}'));
 
     UserCredential userCredential =
         await FirebaseAuth.instance.createUserWithEmailAndPassword(
@@ -64,7 +65,31 @@ Future<ResponseModel?> signUpUser(
   } catch (e) {
     return ResponseModel(
       type: ResponseType.error,
-      message: e.toString(),
+      message: getMessageFromError(e),
     );
   }
+}
+
+String getMessageFromError(Object error) {
+  String errorMessage = 'Что-то пошло не так';
+
+  if (error is FirebaseAuthException) {
+    switch (error.code) {
+      case 'invalid-credential':
+        errorMessage = 'Неверный email или пароль';
+        break;
+      case 'invalid-email':
+        errorMessage = 'Неверный формат email';
+      case 'email-already-in-use':
+        errorMessage = 'Этот email уже используется';
+        break;
+      case 'weak-password':
+        errorMessage = 'Пароль слишком слабый';
+        break;
+      default:
+        errorMessage = 'Произошла ошибка: ${error.message}';
+    }
+  }
+
+  return errorMessage;
 }

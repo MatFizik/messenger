@@ -21,6 +21,14 @@ class AppTheme {
       primary: AppColors.blue,
       secondary: AppColors.green,
     ),
+    inputDecorationTheme: InputDecorationTheme(
+      filled: true,
+      fillColor: AppColors.lightBgPrimary,
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide.none,
+      ),
+    ),
     textTheme: const TextTheme(
       bodyLarge: TextStyle(color: AppColors.textPrimaryLight, fontSize: 16),
       bodyMedium: TextStyle(

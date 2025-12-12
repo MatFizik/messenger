@@ -1,3 +1,4 @@
+import 'package:dotlottie_loader/dotlottie_loader.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:messenger/main.dart';
@@ -54,47 +55,45 @@ class _SplashScreenState extends State<SplashScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              Theme.of(context).colorScheme.primary,
-              Theme.of(context).colorScheme.tertiary,
-            ],
-          ),
-        ),
-        child: Center(
-          child: Lottie.asset(
-            'assets/animations/splash_animation.json',
-            controller: _controller,
-            onLoaded: (composition) {
-              _controller
-                ..duration = composition.duration
-                ..forward();
-            },
-            width: double.infinity,
-            height: double.infinity,
-            fit: BoxFit.contain,
-            errorBuilder: (context, error, stackTrace) {
-              return const Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.send_rounded,
-                    size: 100,
-                    color: Colors.white,
-                  ),
-                  SizedBox(height: 20),
-                  Text(
-                    "Please add splash_animation.json",
-                    style: TextStyle(color: Colors.white),
-                  )
-                ],
+      body: Center(
+        child: DotLottieLoader.fromNetwork(
+          "https://lottie.host/fc86cd24-fe99-4fb8-9eb3-2b42f43d81d8/stqxc7dVuG.lottie",
+          frameBuilder: (context, dotlottie) {
+            if (dotlottie != null) {
+              return Lottie.memory(
+                dotlottie.animations.values.first,
+                width: double.infinity,
+                height: double.infinity,
+                fit: BoxFit.contain,
+                repeat: true,
+                controller: _controller,
+                onLoaded: (composition) {
+                  _controller
+                    ..duration = composition.duration
+                    ..forward();
+                },
+                errorBuilder: (context, error, stackTrace) {
+                  _controller.status == AnimationStatus.completed;
+                  return const Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.send_rounded,
+                        size: 100,
+                        color: Colors.white,
+                      ),
+                      SizedBox(height: 20),
+                      Text(
+                        "Какая то фигня с анимацией",
+                        style: TextStyle(color: Colors.black),
+                      )
+                    ],
+                  );
+                },
               );
-            },
-          ),
+            }
+            return const SizedBox.shrink();
+          },
         ),
       ),
     );
