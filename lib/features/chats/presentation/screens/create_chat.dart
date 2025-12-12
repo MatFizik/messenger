@@ -43,7 +43,7 @@ class _CreateChatState extends State<CreateChat> {
       }
     }
 
-    String name_second = await _firestore
+    String nameSecond = await _firestore
         .collection('users')
         .doc(userId)
         .get()
@@ -56,7 +56,7 @@ class _CreateChatState extends State<CreateChat> {
         'messenges': [],
         'name_first':
             '${await _firestore.collection('users').doc(userId).get().then((value) => value['full_name'])}',
-        'name_second': name_second,
+        'name_second': currentUser.uid,
         'timestamp': FieldValue.serverTimestamp(),
       });
       chatId = newChatRef.id;
@@ -66,7 +66,7 @@ class _CreateChatState extends State<CreateChat> {
       MaterialPageRoute(
         builder: (context) => ChatScreen(
           chatId: chatId!,
-          name: utf8.decode(base64Decode(name_second)),
+          name: utf8.decode(base64Decode(nameSecond)),
         ),
       ),
     );

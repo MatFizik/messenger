@@ -69,9 +69,6 @@ class _ChatsScreenState extends State<ChatsScreen> {
       try {
         DocumentSnapshot<Map<String, dynamic>> userDoc =
             await _firestore.collection('users').doc(uid).get();
-
-        if (!mounted) return;
-
         if (userDoc.exists) {
           setState(() {
             userModel = UserModel.fromMap(userDoc.data()!);
@@ -83,12 +80,10 @@ class _ChatsScreenState extends State<ChatsScreen> {
           });
         }
       } catch (e) {
-        if (mounted) {
-          AppSnackBar.showSnackBar(
-            context,
-            'Ошибка загрузки пользователя',
-          );
-        }
+        AppSnackBar.showSnackBar(
+          context,
+          'Ошибка загрузки пользователя',
+        );
       }
     }
   }
@@ -149,16 +144,7 @@ class _ChatsScreenState extends State<ChatsScreen> {
                     );
                   }
 
-                  chats = snapshot.data!.docs
-                      .where((element) =>
-                          element['lastMessage'].toString().isNotEmpty)
-                      .toList();
-
-                  if (chats!.isEmpty) {
-                    return const Center(
-                      child: Text('Чатов нет'),
-                    );
-                  }
+                  chats = snapshot.data!.docs;
 
                   return ListView.builder(
                     itemCount:
@@ -192,11 +178,9 @@ class _ChatsScreenState extends State<ChatsScreen> {
                           onTap: () => _openChatScreen(
                             chat.id.trim(),
                             userModel?.fullName ==
-                                    (
-                                      utf8.decode(
-                                        base64Decode(
-                                          chat['name_first'].toString(),
-                                        ),
+                                    utf8.decode(
+                                      base64Decode(
+                                        chat['name_first'].toString(),
                                       ),
                                     )
                                 ? utf8.decode(
