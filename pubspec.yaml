@@ -17,7 +17,7 @@ dependencies:
   flutter_bloc: ^9.1.0
   toastification: ^2.3.0
   lottie: ^3.1.0
-  dotlottie_loader: 0.0.5
+  dotlottie_loader: ^0.0.5
   vibration: ^3.1.3
   
 

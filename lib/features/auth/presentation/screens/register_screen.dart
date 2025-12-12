@@ -86,7 +86,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   width: 200,
                                   height: 200,
                                   fit: BoxFit.contain,
-                                  repeat: true,
+                                  reverse: true,
                                 );
                               }
                               return const SizedBox.shrink();

@@ -80,7 +80,7 @@ class _AuthScreenState extends State<AuthScreen> {
                                   width: 200,
                                   height: 200,
                                   fit: BoxFit.contain,
-                                  repeat: true,
+                                  reverse: true,
                                 );
                               }
                               return const SizedBox.shrink();
