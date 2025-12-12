@@ -43,6 +43,11 @@ class _CreateChatState extends State<CreateChat> {
       }
     }
 
+    String name_second = await _firestore
+        .collection('users')
+        .doc(userId)
+        .get()
+        .then((value) => value['full_name']);
     if (chatId == null) {
       var newChatRef = _firestore.collection('chats').doc();
       await newChatRef.set({
@@ -51,15 +56,19 @@ class _CreateChatState extends State<CreateChat> {
         'messenges': [],
         'name_first':
             '${await _firestore.collection('users').doc(userId).get().then((value) => value['full_name'])}',
-        'name_second':
-            '${await _firestore.collection('users').doc(currentUser.uid).get().then((value) => value['full_name'])}',
+        'name_second': name_second,
         'timestamp': FieldValue.serverTimestamp(),
       });
       chatId = newChatRef.id;
     }
 
     Navigator.of(context).pushReplacement(
-      MaterialPageRoute(builder: (context) => ChatScreen(chatId: chatId!)),
+      MaterialPageRoute(
+        builder: (context) => ChatScreen(
+          chatId: chatId!,
+          name: utf8.decode(base64Decode(name_second)),
+        ),
+      ),
     );
   }
 

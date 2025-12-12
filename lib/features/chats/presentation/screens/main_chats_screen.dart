@@ -31,10 +31,13 @@ class _ChatsScreenState extends State<ChatsScreen> {
     super.initState();
   }
 
-  void _openChatScreen(String chatId) {
+  void _openChatScreen(String chatId, String name) {
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) => ChatScreen(chatId: chatId),
+        builder: (context) => ChatScreen(
+          chatId: chatId,
+          name: name,
+        ),
       ),
     );
   }
@@ -66,6 +69,9 @@ class _ChatsScreenState extends State<ChatsScreen> {
       try {
         DocumentSnapshot<Map<String, dynamic>> userDoc =
             await _firestore.collection('users').doc(uid).get();
+
+        if (!mounted) return;
+
         if (userDoc.exists) {
           setState(() {
             userModel = UserModel.fromMap(userDoc.data()!);
@@ -77,10 +83,12 @@ class _ChatsScreenState extends State<ChatsScreen> {
           });
         }
       } catch (e) {
-        AppSnackBar.showSnackBar(
-          context,
-          'Ошибка загрузки пользователя',
-        );
+        if (mounted) {
+          AppSnackBar.showSnackBar(
+            context,
+            'Ошибка загрузки пользователя',
+          );
+        }
       }
     }
   }
@@ -141,7 +149,16 @@ class _ChatsScreenState extends State<ChatsScreen> {
                     );
                   }
 
-                  chats = snapshot.data!.docs;
+                  chats = snapshot.data!.docs
+                      .where((element) =>
+                          element['lastMessage'].toString().isNotEmpty)
+                      .toList();
+
+                  if (chats!.isEmpty) {
+                    return const Center(
+                      child: Text('Чатов нет'),
+                    );
+                  }
 
                   return ListView.builder(
                     itemCount:
@@ -172,7 +189,24 @@ class _ChatsScreenState extends State<ChatsScreen> {
                         direction: DismissDirection.endToStart,
                         key: Key(chat?.id ?? ''),
                         child: ChatTileWidget(
-                          onTap: () => _openChatScreen(chat.id.trim()),
+                          onTap: () => _openChatScreen(
+                            chat.id.trim(),
+                            userModel?.fullName ==
+                                    (
+                                      utf8.decode(
+                                        base64Decode(
+                                          chat['name_first'].toString(),
+                                        ),
+                                      ),
+                                    )
+                                ? utf8.decode(
+                                    base64Decode(
+                                        chat['name_second'].toString()),
+                                  )
+                                : utf8.decode(
+                                    base64Decode(chat['name_first'].toString()),
+                                  ),
+                          ),
                           avatarUrl: null,
                           name: userModel?.fullName ==
                                   (utf8.decode(base64Decode(

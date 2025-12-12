@@ -1,15 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:messenger/common/constant/assets.dart';
 import 'package:messenger/common/theme/app_colors.dart';
 
 class AppTheme {
   // Светлая тема
   static ThemeData lightTheme = ThemeData(
+    extensions: const [
+      ChatTheme(
+        backgroundChat: Assets.chatBackground_1,
+        ownMessageColor: AppColors.green,
+        otherMessageColor: Colors.white,
+        actionColor: Color(0xFFE9EFE5),
+      ),
+    ],
     brightness: Brightness.light,
     primaryColor: AppColors.green,
     highlightColor: AppColors.lightBgSecondary,
     scaffoldBackgroundColor: AppColors.lightBgPrimary,
     colorScheme: const ColorScheme.light(
-      primary: AppColors.green,
+      primary: AppColors.blue,
       secondary: AppColors.green,
     ),
     textTheme: const TextTheme(
@@ -20,6 +29,11 @@ class AppTheme {
           fontWeight: FontWeight.bold),
       bodySmall: TextStyle(color: AppColors.textTertiaryLight, fontSize: 12),
       titleLarge: TextStyle(color: AppColors.textPrimaryLight, fontSize: 32),
+      titleMedium: TextStyle(
+        color: AppColors.textPrimaryLight,
+        fontSize: 18,
+        fontWeight: FontWeight.w600,
+      ),
     ),
     appBarTheme: const AppBarTheme(
       backgroundColor: AppColors.lightBgPrimary,
@@ -47,6 +61,19 @@ class AppTheme {
     ),
 
     // Кнопки-------------------------------------------------------------------
+    buttonTheme: const ButtonThemeData(
+      colorScheme: ColorScheme(
+        brightness: Brightness.light,
+        primary: AppColors.darkBgPrimary,
+        onPrimary: AppColors.darkBgPrimary,
+        secondary: AppColors.lightBgSecondary,
+        onSecondary: AppColors.lightBgSecondary,
+        error: AppColors.red,
+        onError: AppColors.red,
+        surface: AppColors.blue,
+        onSurface: AppColors.blue,
+      ),
+    ),
     textButtonTheme: TextButtonThemeData(
       style: ButtonStyle(
         padding: const WidgetStatePropertyAll(
@@ -73,6 +100,14 @@ class AppTheme {
 
   // Темная тема
   static ThemeData darkTheme = ThemeData(
+    extensions: const [
+      ChatTheme(
+        backgroundChat: Assets.chatBackground_5,
+        ownMessageColor: Color(0xFF5E5DFF),
+        otherMessageColor: Color(0xFF2C2434),
+        actionColor: Color(0xFF221D28),
+      ),
+    ],
     brightness: Brightness.dark,
     primaryColor: AppColors.green,
     highlightColor: AppColors.darkBgSecondary,
@@ -107,7 +142,7 @@ class AppTheme {
       color: AppColors.darkBgSecondary,
       thickness: 1,
     ),
-    tabBarTheme: TabBarTheme(
+    tabBarTheme: TabBarThemeData(
       labelColor: AppColors.textPrimary,
       indicatorColor: AppColors.textPrimary,
       unselectedLabelColor: AppColors.textTertiary,
@@ -115,6 +150,7 @@ class AppTheme {
           WidgetStateProperty.all(AppColors.textPrimary.withOpacity(0.1)),
       dividerHeight: 0,
     ),
+    inputDecorationTheme: InputDecorationTheme(),
     searchBarTheme: const SearchBarThemeData(
       hintStyle: WidgetStatePropertyAll(
         TextStyle(color: AppColors.textTertiary),
@@ -125,4 +161,35 @@ class AppTheme {
       //leading: Icon(Icons.search, color: AppColors.textTertiaryLight),
     ),
   );
+}
+
+class ChatTheme extends ThemeExtension<ChatTheme> {
+  final String? backgroundChat;
+  final Color? ownMessageColor;
+  final Color? otherMessageColor;
+  final Color? actionColor;
+
+  const ChatTheme({
+    required this.backgroundChat,
+    this.ownMessageColor,
+    this.otherMessageColor,
+    this.actionColor,
+  });
+
+  @override
+  ChatTheme copyWith({String? backgroundChat}) {
+    return ChatTheme(
+      backgroundChat: backgroundChat ?? this.backgroundChat,
+    );
+  }
+
+  @override
+  ChatTheme lerp(ThemeExtension<ChatTheme>? other, double t) {
+    if (other is! ChatTheme) {
+      return this;
+    }
+    return ChatTheme(
+      backgroundChat: t < 0.5 ? backgroundChat : other.backgroundChat,
+    );
+  }
 }

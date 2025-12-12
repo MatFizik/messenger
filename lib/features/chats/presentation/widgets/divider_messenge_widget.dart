@@ -1,25 +1,35 @@
 import 'package:flutter/material.dart';
+import 'package:messenger/common/theme/app_theme.dart';
 
 class DividerMessengeWidget extends StatelessWidget {
-  const DividerMessengeWidget({super.key});
+  final String date;
+  const DividerMessengeWidget({super.key, required this.date});
 
   @override
   Widget build(BuildContext context) {
-    return const Padding(
-      padding: EdgeInsets.symmetric(vertical: 20.0),
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 20.0),
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Expanded(
-            child: Divider(thickness: 1),
-          ),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 8.0),
-            child: Text(
-              'Сегодня', // доделать
+          Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(12.0),
+              color: Theme.of(context)
+                  .extension<ChatTheme>()
+                  ?.actionColor
+                  ?.withValues(alpha: 0.5),
             ),
-          ),
-          Expanded(
-            child: Divider(thickness: 1),
+            child: Padding(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 6.0, vertical: 2.0),
+              child: Text(
+                style: const TextStyle(
+                  fontWeight: FontWeight.normal,
+                ),
+                date,
+              ),
+            ),
           ),
         ],
       ),
