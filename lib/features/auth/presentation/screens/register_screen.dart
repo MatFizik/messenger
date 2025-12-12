@@ -78,19 +78,20 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             }
                           },
                           child: DotLottieLoader.fromNetwork(
-                              "https://lottie.host/b86edf3c-e498-4e69-a0bf-60b9b36b2aa3/3gpiceN4mv.lottie",
-                              frameBuilder: (context, dotlottie) {
-                            if (dotlottie != null) {
-                              return Lottie.memory(
-                                dotlottie.animations.values.first,
-                                width: 200,
-                                height: 200,
-                                fit: BoxFit.contain,
-                                repeat: true,
-                              );
-                            }
-                            return const SizedBox.shrink();
-                          }),
+                            "https://lottie.host/b86edf3c-e498-4e69-a0bf-60b9b36b2aa3/3gpiceN4mv.lottie",
+                            frameBuilder: (context, dotlottie) {
+                              if (dotlottie != null) {
+                                return Lottie.memory(
+                                  dotlottie.animations.values.first,
+                                  width: 200,
+                                  height: 200,
+                                  fit: BoxFit.contain,
+                                  repeat: true,
+                                );
+                              }
+                              return const SizedBox.shrink();
+                            },
+                          ),
                         ),
                         Text('Создание аккаунта',
                             style: Theme.of(context).textTheme.titleLarge),
