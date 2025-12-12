@@ -1,8 +1,10 @@
 import 'dart:io';
+import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:messenger/common/theme/app_colors.dart';
 import 'package:messenger/common/theme/app_theme.dart';
+import 'package:messenger/features/chats/presentation/widgets/glass_container_widget.dart';
 
 class ChatActionWidget extends StatefulWidget {
   final TextEditingController controller;
@@ -28,44 +30,46 @@ class _ChatActionWidgetState extends State<ChatActionWidget> {
       child: Row(
         children: [
           Expanded(
-            child: Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(30),
-                color: Theme.of(context)
-                    .extension<ChatTheme>()
-                    ?.actionColor
-                    ?.withValues(
-                      alpha: 0.4,
-                    ),
-              ),
-              child: TextFormField(
-                controller: widget.controller,
-                maxLines: 5,
-                minLines: 1,
-                onFieldSubmitted: (value) => widget.sendMessege(),
-                style: const TextStyle(fontSize: 16, height: 1.4),
-                decoration: InputDecoration(
-                  filled: true,
-                  fillColor: Theme.of(context)
-                      .extension<ChatTheme>()
-                      ?.actionColor
-                      ?.withValues(
-                        alpha: 0.4,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(25),
+              child: Container(
+                decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [Colors.transparent, Colors.transparent],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                ),
+                child: GlassContainerWidget(
+                  child: TextFormField(
+                    controller: widget.controller,
+                    maxLines: 5,
+                    minLines: 1,
+                    onFieldSubmitted: (value) => widget.sendMessege(),
+                    style: const TextStyle(fontSize: 16, height: 1.4),
+                    decoration: InputDecoration(
+                      filled: true,
+                      fillColor: Theme.of(context)
+                          .extension<ChatTheme>()
+                          ?.actionColor
+                          ?.withValues(
+                            alpha: 0.2,
+                          ),
+                      hintStyle: const TextStyle(color: AppColors.textPrimary),
+                      hintText: 'Сообщение',
+                      contentPadding: const EdgeInsets.symmetric(
+                        vertical: 10,
+                        horizontal: 16,
                       ),
-                  hintStyle:
-                      const TextStyle(color: AppColors.textTertiaryLight),
-                  hintText: 'Сообщение',
-                  contentPadding: const EdgeInsets.symmetric(
-                    vertical: 10,
-                    horizontal: 16,
-                  ),
-                  enabledBorder: const OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(30)),
-                    borderSide: BorderSide.none,
-                  ),
-                  focusedBorder: const OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(30)),
-                    borderSide: BorderSide.none,
+                      enabledBorder: const OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(30)),
+                        borderSide: BorderSide.none,
+                      ),
+                      focusedBorder: const OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(30)),
+                        borderSide: BorderSide.none,
+                      ),
+                    ),
                   ),
                 ),
               ),
@@ -74,32 +78,14 @@ class _ChatActionWidgetState extends State<ChatActionWidget> {
           const SizedBox(width: 8),
           InkWell(
             onTap: () => widget.sendMessege(),
-            child: Container(
-              decoration: BoxDecoration(
-                border: Border.all(
-                  color:
-                      Theme.of(context).extension<ChatTheme>()?.actionColor ??
-                          Colors.transparent,
+            child: SizedBox(
+              width: 50,
+              height: 50,
+              child: GlassContainerWidget(
+                child: Icon(
+                  Icons.send,
+                  color: Theme.of(context).colorScheme.primary,
                 ),
-                shape: BoxShape.circle,
-                color: Theme.of(context)
-                    .extension<ChatTheme>()
-                    ?.actionColor
-                    ?.withValues(
-                      alpha: 0.4,
-                    ),
-              ),
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(30),
-                  color: Theme.of(context)
-                      .extension<ChatTheme>()
-                      ?.actionColor
-                      ?.withValues(alpha: 0.4),
-                ),
-                width: 45,
-                height: 45,
-                child: const Icon(Icons.send),
               ),
             ),
           ),

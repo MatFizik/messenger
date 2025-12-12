@@ -9,12 +9,12 @@ Widget getAvatar({
   String firstName = 'A';
   String lastName = 'A';
   if (name != '' && name != ' ') {
-    if (name.split(' ').length > 1) {
-      firstName = name.split(' ')[0];
-      lastName = name.split(' ')[1];
+    if (name.trim().split(' ').length > 1) {
+      firstName = name.trim().split(' ')[0];
+      lastName = name.trim().split(' ')[1];
     } else {
-      lastName = name.split(' ')[0];
-      firstName = name.split(' ')[0];
+      lastName = name.trim().split(' ')[0];
+      firstName = name.trim().split(' ')[0];
     }
   }
 
