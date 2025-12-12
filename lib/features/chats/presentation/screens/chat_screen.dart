@@ -5,9 +5,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:messenger/common/constant/assets.dart';
 import 'package:messenger/common/theme/app_colors.dart';
+import 'package:messenger/common/theme/app_theme.dart';
 import 'package:messenger/common/utils/letters_avatar/letters_avatar_widget.dart';
 import 'package:messenger/common/widgets/animations/disintegration_widget.dart';
 import 'package:messenger/features/chats/presentation/widgets/chat_action_widget.dart';
+import 'package:messenger/features/chats/presentation/widgets/chat_empty_state_widget.dart';
 import 'package:messenger/features/chats/presentation/widgets/divider_messenge_widget.dart';
 import 'package:messenger/features/chats/presentation/widgets/messenge_bubble_widget.dart';
 import 'package:messenger/features/chats/presentation/widgets/messenge_own_bubble_widget.dart';
@@ -196,10 +198,11 @@ class _ChatScreenState extends State<ChatScreen> {
           ),
         ),
         body: Container(
-          decoration: const BoxDecoration(
+          decoration: BoxDecoration(
             image: DecorationImage(
               image: AssetImage(
-                Assets.chatBackground_1,
+                Theme.of(context).extension<ChatTheme>()?.backgroundChat ??
+                    Assets.chatBackground_1,
               ),
               fit: BoxFit.cover,
             ),
@@ -221,9 +224,10 @@ class _ChatScreenState extends State<ChatScreen> {
                       return const Center(child: CircularProgressIndicator());
                     }
                     if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                      return const Center(
-                        child: Text('Здесь пока нет сообщений'),
-                      );
+                      return ChatEmptyStateWidget(onTap: () {
+                        _controller.text = 'Привет!';
+                        _sendMessage();
+                      });
                     }
 
                     var messenges = snapshot.data!.docs;

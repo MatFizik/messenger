@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:messenger/common/theme/app_theme.dart';
 
 class MessageBubbleWidget extends StatelessWidget {
   final String message;
@@ -21,9 +22,11 @@ class MessageBubbleWidget extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-          decoration: const BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.only(
+          decoration: BoxDecoration(
+            color:
+                Theme.of(context).extension<ChatTheme>()?.otherMessageColor ??
+                    Colors.white,
+            borderRadius: const BorderRadius.only(
               topLeft: Radius.circular(16),
               topRight: Radius.circular(16),
               bottomRight: Radius.circular(16),
@@ -36,10 +39,12 @@ class MessageBubbleWidget extends StatelessWidget {
               Flexible(
                 child: Text(
                   message,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.normal,
-                    color: Colors.black,
+                    color: Theme.of(context).brightness == Brightness.dark
+                        ? Colors.white
+                        : Colors.black,
                   ),
                 ),
               ),

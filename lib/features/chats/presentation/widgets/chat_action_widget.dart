@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:messenger/common/theme/app_colors.dart';
+import 'package:messenger/common/theme/app_theme.dart';
 
 class ChatActionWidget extends StatefulWidget {
   final TextEditingController controller;
@@ -30,7 +31,12 @@ class _ChatActionWidgetState extends State<ChatActionWidget> {
             child: Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(30),
-                color: Colors.white.withValues(alpha: 0.9),
+                color: Theme.of(context)
+                    .extension<ChatTheme>()
+                    ?.actionColor
+                    ?.withValues(
+                      alpha: 0.4,
+                    ),
               ),
               child: TextFormField(
                 controller: widget.controller,
@@ -40,8 +46,12 @@ class _ChatActionWidgetState extends State<ChatActionWidget> {
                 style: const TextStyle(fontSize: 16, height: 1.4),
                 decoration: InputDecoration(
                   filled: true,
-                  fillColor:
-                      Theme.of(context).primaryColor.withValues(alpha: 0.7),
+                  fillColor: Theme.of(context)
+                      .extension<ChatTheme>()
+                      ?.actionColor
+                      ?.withValues(
+                        alpha: 0.4,
+                      ),
                   hintStyle:
                       const TextStyle(color: AppColors.textTertiaryLight),
                   hintText: 'Сообщение',
@@ -66,13 +76,26 @@ class _ChatActionWidgetState extends State<ChatActionWidget> {
             onTap: () => widget.sendMessege(),
             child: Container(
               decoration: BoxDecoration(
+                border: Border.all(
+                  color:
+                      Theme.of(context).extension<ChatTheme>()?.actionColor ??
+                          Colors.transparent,
+                ),
                 shape: BoxShape.circle,
-                color: Colors.white.withValues(alpha: 0.9),
+                color: Theme.of(context)
+                    .extension<ChatTheme>()
+                    ?.actionColor
+                    ?.withValues(
+                      alpha: 0.4,
+                    ),
               ),
               child: Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(30),
-                  color: Theme.of(context).primaryColor.withValues(alpha: 0.8),
+                  color: Theme.of(context)
+                      .extension<ChatTheme>()
+                      ?.actionColor
+                      ?.withValues(alpha: 0.4),
                 ),
                 width: 45,
                 height: 45,

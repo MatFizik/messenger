@@ -149,7 +149,16 @@ class _ChatsScreenState extends State<ChatsScreen> {
                     );
                   }
 
-                  chats = snapshot.data!.docs;
+                  chats = snapshot.data!.docs
+                      .where((element) =>
+                          element['lastMessage'].toString().isNotEmpty)
+                      .toList();
+
+                  if (chats!.isEmpty) {
+                    return const Center(
+                      child: Text('Чатов нет'),
+                    );
+                  }
 
                   return ListView.builder(
                     itemCount:

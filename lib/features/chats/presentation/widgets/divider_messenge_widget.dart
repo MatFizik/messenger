@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:messenger/common/theme/app_theme.dart';
 
 class DividerMessengeWidget extends StatelessWidget {
   final String date;
@@ -14,7 +15,10 @@ class DividerMessengeWidget extends StatelessWidget {
           Container(
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(12.0),
-              color: Colors.white.withValues(alpha: 0.5),
+              color: Theme.of(context)
+                  .extension<ChatTheme>()
+                  ?.actionColor
+                  ?.withValues(alpha: 0.5),
             ),
             child: Padding(
               padding:

@@ -45,7 +45,7 @@ class _CreateChatState extends State<CreateChat> {
 
     String name_second = await _firestore
         .collection('users')
-        .doc(currentUser.uid)
+        .doc(userId)
         .get()
         .then((value) => value['full_name']);
     if (chatId == null) {
@@ -66,7 +66,7 @@ class _CreateChatState extends State<CreateChat> {
       MaterialPageRoute(
         builder: (context) => ChatScreen(
           chatId: chatId!,
-          name: name_second,
+          name: utf8.decode(base64Decode(name_second)),
         ),
       ),
     );
