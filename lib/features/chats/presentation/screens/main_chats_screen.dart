@@ -80,10 +80,12 @@ class _ChatsScreenState extends State<ChatsScreen> {
           });
         }
       } catch (e) {
-        AppSnackBar.showSnackBar(
-          context,
-          'Ошибка загрузки пользователя',
-        );
+        if (mounted) {
+          AppSnackBar.showSnackBar(
+            context,
+            'Ошибка загрузки пользователя',
+          );
+        }
       }
     }
   }

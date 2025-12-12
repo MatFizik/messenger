@@ -54,47 +54,35 @@ class _SplashScreenState extends State<SplashScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              Theme.of(context).colorScheme.primary,
-              Theme.of(context).colorScheme.tertiary,
-            ],
-          ),
-        ),
-        child: Center(
-          child: Lottie.asset(
-            'assets/animations/splash_animation.json',
-            controller: _controller,
-            onLoaded: (composition) {
-              _controller
-                ..duration = composition.duration
-                ..forward();
-            },
-            width: double.infinity,
-            height: double.infinity,
-            fit: BoxFit.contain,
-            errorBuilder: (context, error, stackTrace) {
-              return const Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.send_rounded,
-                    size: 100,
-                    color: Colors.white,
-                  ),
-                  SizedBox(height: 20),
-                  Text(
-                    "Please add splash_animation.json",
-                    style: TextStyle(color: Colors.white),
-                  )
-                ],
-              );
-            },
-          ),
+      body: Center(
+        child: Lottie.asset(
+          'assets/animations/splash_animation.json',
+          controller: _controller,
+          onLoaded: (composition) {
+            _controller
+              ..duration = composition.duration
+              ..forward();
+          },
+          width: double.infinity,
+          height: double.infinity,
+          fit: BoxFit.contain,
+          errorBuilder: (context, error, stackTrace) {
+            return const Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.send_rounded,
+                  size: 100,
+                  color: Colors.white,
+                ),
+                SizedBox(height: 20),
+                Text(
+                  "Please add splash_animation.json",
+                  style: TextStyle(color: Colors.white),
+                )
+              ],
+            );
+          },
         ),
       ),
     );
